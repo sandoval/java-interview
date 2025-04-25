@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "/Users/sandoval/code/interview/./src/main/frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "/Users/sandoval/code/interview/./src/main/frontend/generated/jar-resources",
+  "staticOutput": "/Users/sandoval/code/interview/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "/Users/sandoval/code/interview/target/classes/META-INF/VAADIN/config",
+  "frontendBundleOutput": "/Users/sandoval/code/interview/target/classes/META-INF/VAADIN/webapp",
+  "devBundleOutput": "/Users/sandoval/code/interview/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "/Users/sandoval/code/interview/target/dev-bundle/config",
+  "jarResourcesFolder": "/Users/sandoval/code/interview/./src/main/frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "/Users/sandoval/code/interview/target/sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
