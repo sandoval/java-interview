@@ -33,3 +33,13 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.register<JavaExec>("populateDummyData") {
+    group = "application"
+    description = "Populates the database with dummy data"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.vingcard.athos.interview.InterviewApplication")
+    args = listOf()
+    systemProperties = mapOf("spring.profiles.active" to "dummydata")
+}
+
