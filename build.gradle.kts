@@ -18,11 +18,11 @@ repositories {
 }
 
 dependencies {
-	implementation("com.vaadin:vaadin-spring-boot-starter:24.7.2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	// implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	// implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-web")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -42,5 +42,48 @@ tasks.register<JavaExec>("populateDummyData") {
     mainClass.set("com.vingcard.athos.interview.InterviewApplication")
     args = listOf()
     systemProperties = mapOf("spring.profiles.active" to "dummydata")
+}
+
+// React frontend build tasks
+tasks.register<Exec>("npmInstall") {
+    group = "frontend"
+    description = "Install React dependencies"
+    workingDir = file("frontend")
+    commandLine = if (System.getProperty("os.name").lowercase().contains("windows")) {
+        listOf("cmd", "/c", "npm", "install")
+    } else {
+        listOf("npm", "install")
+    }
+    inputs.file("frontend/package.json")
+    inputs.file("frontend/package-lock.json")
+    outputs.dir("frontend/node_modules")
+}
+
+tasks.register<Exec>("npmBuild") {
+    group = "frontend"
+    description = "Build React application"
+    workingDir = file("frontend")
+    commandLine = if (System.getProperty("os.name").lowercase().contains("windows")) {
+        listOf("cmd", "/c", "npm", "run", "build")
+    } else {
+        listOf("npm", "run", "build")
+    }
+    dependsOn("npmInstall")
+    inputs.dir("frontend/src")
+    inputs.dir("frontend/public")
+    inputs.file("frontend/package.json")
+    outputs.dir("frontend/build")
+}
+
+tasks.register<Copy>("copyFrontend") {
+    group = "frontend"
+    description = "Copy React build to Spring Boot static resources"
+    dependsOn("npmBuild")
+    from("frontend/build")
+    into("src/main/resources/static")
+}
+
+tasks.named("processResources") {
+    dependsOn("copyFrontend")
 }
 
