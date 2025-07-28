@@ -47,7 +47,7 @@ public class DummyDataLoader implements CommandLineRunner {
         }
     }
 
-    private String randomMac() {
+    public String generateRandomMac() {
         byte[] macAddr = new byte[6];
         random.nextBytes(macAddr);
         StringBuilder sb = new StringBuilder(17);
@@ -56,5 +56,9 @@ public class DummyDataLoader implements CommandLineRunner {
             sb.append(String.format(Locale.US, "%02X", b));
         }
         return sb.toString();
+    }
+
+    private String randomMac() {
+        return generateRandomMac();
     }
 }

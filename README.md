@@ -2,7 +2,8 @@
 
 ## Prerequisites
 - **Docker** must be installed and running (used for the PostgreSQL database)
-- Java 21
+- Java 21 or 24
+- Node.js 20 and NPM 11
 
 ## How to Run the Application
 
@@ -21,6 +22,8 @@ To insert at least 10 gateways (serials starting with `ALKG`) and 100 locks (ser
 ```
 
 This command runs a special Spring profile (`dummydata`) which loads the dummy data into the database. The web application does **not** start during this process.
+
+Make sure you stop the previous bootRun command before running this command. This command doesn't exit automatically, make sure you quit (Ctrl+C) after the application loads.
 
 ### 3. Running Tests
 
