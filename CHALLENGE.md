@@ -1,7 +1,7 @@
 # Welcome!
 
-Welcome to our Java coding challenge. This is a challenge for Senior software
-developers.
+Welcome to our Java coding challenge. This is a challenge for Senior backend
+engineer.
 
 We will lay out a problem specification and we expect you to solve this problem
 showing your abilities as a Senior engineer.
@@ -80,6 +80,12 @@ vectors of attack (if any), how JWTs are secured and verified, etc.
 implementation doesn't need to comply with all requirements initially. Any requirements
 it doesn't comply with, there **must** be an explanation (plan) on how it will be implemented
 in the future.
+- You **must** provide instructions in your PR on how to test the solution, including
+any Spring configuration parameters, test account and configuration for an API development
+environment (we recommend [Hoppscotch](https://docs.hoppscotch.io/documentation/getting-started/introduction)
+or [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html)).
+- You **should not** do any frontend work. Validation should be done using an API development
+environment.
 
 ## Get to work!
 
