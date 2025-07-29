@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/locks")
-@CrossOrigin(origins = "http://localhost:3000")
 public class LockController {
 
     private final LockRepository lockRepository;

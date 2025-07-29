@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lock-gateway-links")
-@CrossOrigin(origins = "http://localhost:3000")
 public class LockGatewayLinkController {
 
     private final LockGatewayLinkRepository linkRepository;

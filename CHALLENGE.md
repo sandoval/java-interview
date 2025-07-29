@@ -13,7 +13,7 @@ process behind your decisions and your documentation than the implementation its
 
 ## Motivation
 
-Considering the ever-evolving landscape of threat actors, we **must** take great care
+Considering the ever-evolving landscape of threat actors, we must take great care
 into implementing and updating authentication and authorization strategies to keep
 our applications secure.
 
@@ -25,55 +25,47 @@ threat actors and attacks, for example.
 
 ## Requirements
 
+### Specifics
+
+The application currently serves multiple API endpoints.
+You **must** implement an authentication and authorization strategy for this application.
+
+- Access to all endpoints **must** be authenticated by a previously registered user.
+- There **must** be two possible access profiles (read and write).
+- Endpoints that make any changes to the database **must** be available only to users with
+write access profile.
+- Endpoints that only retrieve and display information **must** be available to only to
+users with read access profile.
+
 ### Universal login (authentication)
 
 There **must** be a central point of authentication for all users and applications.
 
-- Single implementation of authentication logic to make sure all rules are followed
-by all applications.
-- Single service access to user credentials, making it easier to protect them.
-- Changes to the authentication process may be done without interfering with any clients.
-- **must** be easy to add new applications for the same user pool.
+- It **must** be easy to add new applications for the same user pool.
+- Authentication solution **must** support email addresses for user identification.
+- Authentication solution **must** support user self-service account creation, requiring
+only email verification.
+- User accounts **must** have the read access profile automatically assigned upon
+account creation.
+- Authentication solution **must** support hundreds of thousands of users.
+- Authentication user interface **should** be localizable and available at least in
+English, Portuguese and Spanish.
+- Authentication solution **should** support phone numbers for user identification
+in the future.
+- Authentication solution **should** support SSO integration in the future.
 
 ### Browser-based authentication
 
 Authentication **must** be done on an up-to-date OS-provided browser.
 
-- Users are educated to only provide their credentials on a browser to the authenticated
-domain.
-- Authentication experience will be uniform across all clients (web, mobile apps, etc).
-- Easier to implement bot and DDoS mitigation strategies.
-- Most up-to-date technologies are first available on browsers (e.g. passkeys).
+- Browser authentication **should** have bot mitigation strategies in place.
 
-### OAuth2
+### OAuth2 and JWTs
 
-Authorization **must** be implemented using OAuth2.
+Authentication and authorization **must** be implemented using OAuth2 and JWTs.
 
-- Battle-tested and widely used standard for authorization.
-- Enables several authorization flows for different types of clients, such as confidential
-(e.g. third-party APIs), public (e.g. web, mobile apps) and ones with limited input
-(e.g. hardware devices).
-- Allows for limiting the scope of the authorization according to the client or user.
-- Allows for refreshing credentials for long-lived sessions.
+- Authorization **must** use OAuth2 and JSON web tokens (JWTs).
 
-### JSON Web Tokens (JWTs)
-
-Authorization **must** be implemented using JWTs.
-
-- Token validity may be verified locally with cryptography (no network requests required).
-
-### Other requirements
-
-- Authentication user interface **must** be localizable and available at least in
-English, Portuguese and Spanish.
-- Authentication solution **must** support both email addresses and phone numbers
-as methods for user identification.
-- Authentication solution **should** support SSO integration.
-- Authentication solution **must** provide bot-mitigation tools.
-- Authentication solution **must** support hundreds of thousands of users.
-- There **must** be a way of restricting what any user can do in the platform,
-for example restricting some users to only read from the platform and others
-to read or write to the platform.
 
 ## What we expect
 
@@ -81,17 +73,17 @@ to read or write to the platform.
 self-hosted, fully managed (e.g. AWS Cognito, OKTA, Auth0) or self-developed.
 - You **must** clearly explain why your choice is the best for these requirements and
 explain your thought process behind it, including all information you considered, any
-proofs-of-concept you developed for testing.
+proofs-of-concept you developed for testing, etc.
 - You **must** fully understand the security behind the chosen solution, why it is secure,
 vectors of attack (if any), how JWTs are secured and verified, etc.
-- You **should** present an initial implementation in the form of a pull-request (PR). This
+- You **must** present an initial implementation in the form of a pull-request (PR). This
 implementation doesn't need to comply with all requirements initially. Any requirements
 it doesn't comply with, there **must** be an explanation (plan) on how it will be implemented
 in the future.
 
 ## Get to work!
 
-- You have five days to complete this challenge. We don't want to take much of your time.
-- Remember that designing the solution, documenting and explaining it is more important
-than the actual implementation. If you don't have time to do it all, focus on the design.
+- You have five days to complete this challenge. We don't want to take too much of your time.
+- Remember that designing the solution, documenting and explaining your decisions is as important
+as the actual implementation.
 - If you have any questions about the challenge, don't hesitate to contact us at any point.

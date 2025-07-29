@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/gateways")
-@CrossOrigin(origins = "http://localhost:3000")
 public class GatewayController {
 
     private final GatewayRepository gatewayRepository;

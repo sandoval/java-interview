@@ -1,9 +1,13 @@
-# Interview Project
+# Lock Simulator
+
+This is an example project used for Java coding interviews.
+
+This system provides a simple implementation of a lock simulator. It virtually emulates
+locks and gateways in an IoT system.
 
 ## Prerequisites
 - **Docker** must be installed and running (used for the PostgreSQL database)
 - Java 21 or 24
-- Node.js 20 and NPM 11
 
 ## How to Run the Application
 
@@ -15,15 +19,18 @@ This will start the web application and connect to the database (via Docker Comp
 ```
 
 ### 2. Populate the Database with Dummy Data
-To insert at least 10 gateways (serials starting with `ALKG`) and 100 locks (serials starting with `ALKS`), run:
+To insert at least 10 gateways (serials starting with `ALKG`) and 100 locks (serials
+starting with `ALKS`), run:
 
 ```sh
 ./gradlew populateDummyData
 ```
 
-This command runs a special Spring profile (`dummydata`) which loads the dummy data into the database. The web application does **not** start during this process.
+This command runs a special Spring profile (`dummydata`) which loads the dummy data
+into the database. The web application does **not** start during this process.
 
-Make sure you stop the previous bootRun command before running this command. This command doesn't exit automatically, make sure you quit (Ctrl+C) after the application loads.
+Make sure you stop the previous bootRun command before running this command. This
+command doesn't exit automatically, make sure you quit (Ctrl+C) after the application loads.
 
 ### 3. Running Tests
 
