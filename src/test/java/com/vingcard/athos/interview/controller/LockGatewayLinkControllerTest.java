@@ -6,11 +6,13 @@ import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -20,22 +22,27 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(LockGatewayLinkController.class)
+@ExtendWith(MockitoExtension.class)
 class LockGatewayLinkControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private LockGatewayLinkRepository linkRepository;
 
-    @Autowired
+    @InjectMocks
+    private LockGatewayLinkController lockGatewayLinkController;
+
     private ObjectMapper objectMapper;
 
     private LockGatewayLink testLink;
 
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(lockGatewayLinkController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         testLink = new LockGatewayLink("LOCKSERIAL000001", "GATEWAYSERIAL0001", -55.5);
     }
 

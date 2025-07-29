@@ -5,11 +5,13 @@ import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -19,22 +21,27 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(GatewayController.class)
+@ExtendWith(MockitoExtension.class)
 class GatewayControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private GatewayRepository gatewayRepository;
 
-    @Autowired
+    @InjectMocks
+    private GatewayController gatewayController;
+
     private ObjectMapper objectMapper;
 
     private Gateway testGateway;
 
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(gatewayController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         testGateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
     }
 
