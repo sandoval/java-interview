@@ -1,7 +1,9 @@
 package com.vingcard.athos.interview.exception;
 
+import com.vingcard.athos.interview.exception.auth.ForbiddenExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -20,8 +22,8 @@ public class GlobalExceptionHandler {
 		));
 	}
 
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<CustomExceptionResponse> handleNotFoundException(ResourceNotFoundException e) {
+	@ExceptionHandler(NotFoundExceptionResponse.class)
+	public ResponseEntity<CustomExceptionResponse> handleNotFoundException(NotFoundExceptionResponse e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomExceptionResponse(
 				LocalDateTime.now(),
 				false,
@@ -36,6 +38,26 @@ public class GlobalExceptionHandler {
 				LocalDateTime.now(),
 				false,
 				HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				e.getMessage()
+		));
+	}
+
+	@ExceptionHandler(ForbiddenExceptionResponse.class)
+	public ResponseEntity<CustomExceptionResponse> handleForbidden(ForbiddenExceptionResponse ex) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new CustomExceptionResponse(
+				LocalDateTime.now(),
+				false,
+				HttpStatus.FORBIDDEN.value(),
+				ex.getMessage()
+		));
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<CustomExceptionResponse> handleAccessDeniedException(AccessDeniedException e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new CustomExceptionResponse(
+				LocalDateTime.now(),
+				false,
+				HttpStatus.FORBIDDEN.value(),
 				e.getMessage()
 		));
 	}

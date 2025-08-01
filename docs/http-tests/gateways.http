@@ -1,18 +1,17 @@
 ### Get all Gateways
 GET http://localhost:8080/api/gateways
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Get Gateway by Serial
 GET http://localhost:8080/api/gateways/ALKG000000000606
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Create a new Gateway
 POST http://localhost:8080/api/gateways
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "serial": "ALKG000000000606",
@@ -20,11 +19,10 @@ Content-Type: application/json
   "version": "v4.0.0"
 }
 
-###
-
 ### Update an existing Gateway
 PUT http://localhost:8080/api/gateways/ALKG000000000606
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "serial": "ALKG000000000606",
@@ -33,7 +31,6 @@ Content-Type: application/json
   "version": "v4.1.0"
 }
 
-###
-
 ### Delete a Gateway
 DELETE http://localhost:8080/api/gateways/ALKG000000000606
+Authorization: Bearer {{access_token}}

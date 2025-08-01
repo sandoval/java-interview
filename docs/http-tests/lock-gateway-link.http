@@ -1,38 +1,33 @@
 ### Get all Lock-Gateway Links
 GET http://localhost:8080/api/lock-gateway-links
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Get Links by Lock Serial
 GET http://localhost:8080/api/lock-gateway-links/lock/ALKS000000000001
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Get Links by Gateway Serial
 GET http://localhost:8080/api/lock-gateway-links/gateway/ALKG000000000001
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Get a specific Link
 GET http://localhost:8080/api/lock-gateway-links/ALKS000000000001/ALKG000000000001
 Accept: application/json
-
-###
+Authorization: Bearer {{access_token}}
 
 ### Create a new Lock-Gateway Link
 POST http://localhost:8080/api/lock-gateway-links
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "lockSerial": "ALKS000000000001",
   "gatewaySerial": "ALKG000000000001",
   "rssi": -55.0
 }
-
-###
 
 ### Update a Lock-Gateway Link
 PUT http://localhost:8080/api/lock-gateway-links/ALKS000000000001/ALKG000000000001

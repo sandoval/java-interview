@@ -53,7 +53,7 @@ class LockControllerTest {
         
         when(lockRepository.findAll()).thenReturn(Arrays.asList(lock1, lock2));
 
-        mockMvc.perform(get("/http/locks"))
+        mockMvc.perform(get("/docs/http-tests/locks"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].serial").value("LOCKSERIAL000001"))
@@ -72,7 +72,7 @@ class LockControllerTest {
     void getLockBySerial_WhenExists_ShouldReturnLock() throws Exception {
         when(lockRepository.findById("LOCKSERIAL000001")).thenReturn(Optional.of(testLock));
 
-        mockMvc.perform(get("/http/locks/LOCKSERIAL000001"))
+        mockMvc.perform(get("/docs/http-tests/locks/LOCKSERIAL000001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serial").value("LOCKSERIAL000001"))
                 .andExpect(jsonPath("$.name").value("Main Door"))
@@ -85,7 +85,7 @@ class LockControllerTest {
     void getLockBySerial_WhenNotExists_ShouldReturn404() throws Exception {
         when(lockRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/http/locks/nonexistent"))
+        mockMvc.perform(get("/docs/http-tests/locks/nonexistent"))
                 .andExpect(status().isNotFound());
     }
 
@@ -94,7 +94,7 @@ class LockControllerTest {
         Lock newLock = new Lock("LOCKSERIAL000003", "Side Door", "33:44:55:66:77:88", false, "v2.2.0");
         when(lockRepository.save(any(Lock.class))).thenReturn(newLock);
 
-        mockMvc.perform(post("/http/locks")
+        mockMvc.perform(post("/docs/http-tests/locks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newLock)))
                 .andExpect(status().isOk())
@@ -111,7 +111,7 @@ class LockControllerTest {
     void createLock_WithEmptySerial_ShouldReturn400() throws Exception {
         Lock invalidLock = new Lock("", "Side Door", "33:44:55:66:77:88", false, "v2.2.0");
 
-        mockMvc.perform(post("/http/locks")
+        mockMvc.perform(post("/docs/http-tests/locks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLock)))
                 .andExpect(status().isBadRequest());
@@ -121,7 +121,7 @@ class LockControllerTest {
     void createLock_WithNullSerial_ShouldReturn400() throws Exception {
         Lock invalidLock = new Lock(null, "Side Door", "33:44:55:66:77:88", false, "v2.2.0");
 
-        mockMvc.perform(post("/http/locks")
+        mockMvc.perform(post("/docs/http-tests/locks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLock)))
                 .andExpect(status().isBadRequest());
@@ -138,7 +138,7 @@ class LockControllerTest {
         Lock savedLock = new Lock("LOCKSERIAL000004", "Garage Door", "44:55:66:77:88:99", false, "");
         when(lockRepository.save(any(Lock.class))).thenReturn(savedLock);
 
-        mockMvc.perform(post("/http/locks")
+        mockMvc.perform(post("/docs/http-tests/locks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(lockWithNullVersion)))
                 .andExpect(status().isOk())
@@ -154,7 +154,7 @@ class LockControllerTest {
         when(lockRepository.findById("LOCKSERIAL000001")).thenReturn(Optional.of(existingLock));
         when(lockRepository.save(any(Lock.class))).thenReturn(updatedLock);
 
-        mockMvc.perform(put("/http/locks/LOCKSERIAL000001")
+        mockMvc.perform(put("/docs/http-tests/locks/LOCKSERIAL000001")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedLock)))
                 .andExpect(status().isOk())
@@ -167,7 +167,7 @@ class LockControllerTest {
     void updateLock_WhenNotExists_ShouldReturn404() throws Exception {
         when(lockRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/http/locks/nonexistent")
+        mockMvc.perform(put("/docs/http-tests/locks/nonexistent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testLock)))
                 .andExpect(status().isNotFound());
@@ -178,7 +178,7 @@ class LockControllerTest {
         when(lockRepository.existsById("LOCKSERIAL000001")).thenReturn(true);
         doNothing().when(lockRepository).deleteById("LOCKSERIAL000001");
 
-        mockMvc.perform(delete("/http/locks/LOCKSERIAL000001"))
+        mockMvc.perform(delete("/docs/http-tests/locks/LOCKSERIAL000001"))
                 .andExpect(status().isOk());
 
         verify(lockRepository).deleteById("LOCKSERIAL000001");
@@ -188,7 +188,7 @@ class LockControllerTest {
     void deleteLock_WhenNotExists_ShouldReturn404() throws Exception {
         when(lockRepository.existsById("nonexistent")).thenReturn(false);
 
-        mockMvc.perform(delete("/http/locks/nonexistent"))
+        mockMvc.perform(delete("/docs/http-tests/locks/nonexistent"))
                 .andExpect(status().isNotFound());
 
         verify(lockRepository, never()).deleteById(any());

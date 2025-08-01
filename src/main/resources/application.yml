@@ -11,3 +11,30 @@ spring:
     password: ${POSTGRES_password}
     url: jdbc://postgresql:localhost:5432/assa_abloy_lock_simulator
     driver-class-name: org.postgresql.Driver
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${aws.cognito.uri}/.well-known/jwks.json
+
+      client:
+        registration:
+          cognito:
+            client-id: 5hhk896gi37iaqrimohnl3q04s
+            client-secret: vcvuh54mit1ojblfgmms89d3skprapcn0k3aqo0evrl9mc1lnh8
+            scope: openid
+        provider:
+          cognito:
+            issuer-uri: ${aws.cognito.uri}
+
+aws:
+  accessKeyId: AKIAUFAKZJPMGQADVKK5
+  secretKey: 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
+  region: us-east-1
+  cognito:
+    uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_WH9sgrlAo
+    user-pool-id: us-east-1_WH9sgrlAo
+
+sample:
+  jwe-key-value: classpath:simple.priv

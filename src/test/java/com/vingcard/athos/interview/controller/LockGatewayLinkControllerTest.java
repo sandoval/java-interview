@@ -54,7 +54,7 @@ class LockGatewayLinkControllerTest {
         
         when(linkRepository.findAll()).thenReturn(Arrays.asList(link1, link2));
 
-        mockMvc.perform(get("/http/lock-gateway-links"))
+        mockMvc.perform(get("/docs/http-tests/lock-gateway-links"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].lockSerial").value("LOCKSERIAL000001"))
@@ -72,7 +72,7 @@ class LockGatewayLinkControllerTest {
         
         when(linkRepository.findByLockSerial("LOCKSERIAL000001")).thenReturn(Arrays.asList(link1, link2));
 
-        mockMvc.perform(get("/http/lock-gateway-links/lock/LOCKSERIAL000001"))
+        mockMvc.perform(get("/docs/http-tests/lock-gateway-links/lock/LOCKSERIAL000001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].lockSerial").value("LOCKSERIAL000001"))
@@ -90,7 +90,7 @@ class LockGatewayLinkControllerTest {
         
         when(linkRepository.findByGatewaySerial("GATEWAYSERIAL0001")).thenReturn(Arrays.asList(link1, link2));
 
-        mockMvc.perform(get("/http/lock-gateway-links/gateway/GATEWAYSERIAL0001"))
+        mockMvc.perform(get("/docs/http-tests/lock-gateway-links/gateway/GATEWAYSERIAL0001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].lockSerial").value("LOCKSERIAL000001"))
@@ -106,7 +106,7 @@ class LockGatewayLinkControllerTest {
         LockGatewayLinkId id = new LockGatewayLinkId("LOCKSERIAL000001", "GATEWAYSERIAL0001");
         when(linkRepository.findById(id)).thenReturn(Optional.of(testLink));
 
-        mockMvc.perform(get("/http/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001"))
+        mockMvc.perform(get("/docs/http-tests/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lockSerial").value("LOCKSERIAL000001"))
                 .andExpect(jsonPath("$.gatewaySerial").value("GATEWAYSERIAL0001"))
@@ -118,7 +118,7 @@ class LockGatewayLinkControllerTest {
         LockGatewayLinkId id = new LockGatewayLinkId("nonexistent", "nonexistent");
         when(linkRepository.findById(id)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/http/lock-gateway-links/nonexistent/nonexistent"))
+        mockMvc.perform(get("/docs/http-tests/lock-gateway-links/nonexistent/nonexistent"))
                 .andExpect(status().isNotFound());
     }
 
@@ -127,7 +127,7 @@ class LockGatewayLinkControllerTest {
         LockGatewayLink newLink = new LockGatewayLink("LOCKSERIAL000003", "GATEWAYSERIAL0002", -65.0);
         when(linkRepository.save(any(LockGatewayLink.class))).thenReturn(newLink);
 
-        mockMvc.perform(post("/http/lock-gateway-links")
+        mockMvc.perform(post("/docs/http-tests/lock-gateway-links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newLink)))
                 .andExpect(status().isOk())
@@ -142,7 +142,7 @@ class LockGatewayLinkControllerTest {
     void createLink_WithEmptyLockSerial_ShouldReturn400() throws Exception {
         LockGatewayLink invalidLink = new LockGatewayLink("", "GATEWAYSERIAL0002", -65.0);
 
-        mockMvc.perform(post("/http/lock-gateway-links")
+        mockMvc.perform(post("/docs/http-tests/lock-gateway-links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLink)))
                 .andExpect(status().isBadRequest());
@@ -152,7 +152,7 @@ class LockGatewayLinkControllerTest {
     void createLink_WithEmptyGatewaySerial_ShouldReturn400() throws Exception {
         LockGatewayLink invalidLink = new LockGatewayLink("LOCKSERIAL000003", "", -65.0);
 
-        mockMvc.perform(post("/http/lock-gateway-links")
+        mockMvc.perform(post("/docs/http-tests/lock-gateway-links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLink)))
                 .andExpect(status().isBadRequest());
@@ -162,7 +162,7 @@ class LockGatewayLinkControllerTest {
     void createLink_WithNullLockSerial_ShouldReturn400() throws Exception {
         LockGatewayLink invalidLink = new LockGatewayLink(null, "GATEWAYSERIAL0002", -65.0);
 
-        mockMvc.perform(post("/http/lock-gateway-links")
+        mockMvc.perform(post("/docs/http-tests/lock-gateway-links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLink)))
                 .andExpect(status().isBadRequest());
@@ -172,7 +172,7 @@ class LockGatewayLinkControllerTest {
     void createLink_WithNullGatewaySerial_ShouldReturn400() throws Exception {
         LockGatewayLink invalidLink = new LockGatewayLink("LOCKSERIAL000003", null, -65.0);
 
-        mockMvc.perform(post("/http/lock-gateway-links")
+        mockMvc.perform(post("/docs/http-tests/lock-gateway-links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidLink)))
                 .andExpect(status().isBadRequest());
@@ -187,7 +187,7 @@ class LockGatewayLinkControllerTest {
         when(linkRepository.findById(id)).thenReturn(Optional.of(existingLink));
         when(linkRepository.save(any(LockGatewayLink.class))).thenReturn(updatedLink);
 
-        mockMvc.perform(put("/http/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001")
+        mockMvc.perform(put("/docs/http-tests/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedLink)))
                 .andExpect(status().isOk())
@@ -199,7 +199,7 @@ class LockGatewayLinkControllerTest {
         LockGatewayLinkId id = new LockGatewayLinkId("nonexistent", "nonexistent");
         when(linkRepository.findById(id)).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/http/lock-gateway-links/nonexistent/nonexistent")
+        mockMvc.perform(put("/docs/http-tests/lock-gateway-links/nonexistent/nonexistent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testLink)))
                 .andExpect(status().isNotFound());
@@ -211,7 +211,7 @@ class LockGatewayLinkControllerTest {
         when(linkRepository.existsById(id)).thenReturn(true);
         doNothing().when(linkRepository).deleteById(id);
 
-        mockMvc.perform(delete("/http/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001"))
+        mockMvc.perform(delete("/docs/http-tests/lock-gateway-links/LOCKSERIAL000001/GATEWAYSERIAL0001"))
                 .andExpect(status().isOk());
 
         verify(linkRepository).deleteById(id);
@@ -222,7 +222,7 @@ class LockGatewayLinkControllerTest {
         LockGatewayLinkId id = new LockGatewayLinkId("nonexistent", "nonexistent");
         when(linkRepository.existsById(id)).thenReturn(false);
 
-        mockMvc.perform(delete("/http/lock-gateway-links/nonexistent/nonexistent"))
+        mockMvc.perform(delete("/docs/http-tests/lock-gateway-links/nonexistent/nonexistent"))
                 .andExpect(status().isNotFound());
 
         verify(linkRepository, never()).deleteById(any());

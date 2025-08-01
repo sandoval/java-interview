@@ -47,7 +47,7 @@ class GatewayIntegrationTest {
         // Create a gateway
         Gateway gateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
         
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isOk())
@@ -60,7 +60,7 @@ class GatewayIntegrationTest {
         assertTrue(gatewayRepository.findById("GATEWAY00000001").isPresent());
 
         // Retrieve the gateway
-        mockMvc.perform(get("/http/gateways/GATEWAY00000001"))
+        mockMvc.perform(get("/docs/http-tests/gateways/GATEWAY00000001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serial").value("GATEWAY00000001"))
                 .andExpect(jsonPath("$.macAddress").value("AA:BB:CC:DD:EE:FF"))
@@ -75,17 +75,17 @@ class GatewayIntegrationTest {
         Gateway gateway2 = new Gateway("GATEWAY00000002", "BB:CC:DD:EE:FF:00", false, "v1.1.0");
         Gateway gateway3 = new Gateway("GATEWAY00000003", "CC:DD:EE:FF:00:11", true, "v2.0.0");
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway1)))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway2)))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway3)))
                 .andExpect(status().isOk());
@@ -94,7 +94,7 @@ class GatewayIntegrationTest {
         assertEquals(3, gatewayRepository.count());
 
         // List all gateways
-        mockMvc.perform(get("/http/gateways"))
+        mockMvc.perform(get("/docs/http-tests/gateways"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].serial").value("GATEWAY00000001"))
@@ -106,14 +106,14 @@ class GatewayIntegrationTest {
     void testUpdateGateway() throws Exception {
         // Create a gateway
         Gateway gateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isOk());
 
         // Update the gateway
         Gateway updatedGateway = new Gateway("GATEWAY00000001", "FF:EE:DD:CC:BB:AA", false, "v2.0.0");
-        mockMvc.perform(put("/http/gateways/GATEWAY00000001")
+        mockMvc.perform(put("/docs/http-tests/gateways/GATEWAY00000001")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedGateway)))
                 .andExpect(status().isOk())
@@ -132,7 +132,7 @@ class GatewayIntegrationTest {
     void testDeleteGateway() throws Exception {
         // Create a gateway
         Gateway gateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isOk());
@@ -141,14 +141,14 @@ class GatewayIntegrationTest {
         assertTrue(gatewayRepository.findById("GATEWAY00000001").isPresent());
 
         // Delete the gateway
-        mockMvc.perform(delete("/http/gateways/GATEWAY00000001"))
+        mockMvc.perform(delete("/docs/http-tests/gateways/GATEWAY00000001"))
                 .andExpect(status().isOk());
 
         // Verify it was deleted
         assertFalse(gatewayRepository.findById("GATEWAY00000001").isPresent());
 
         // Try to retrieve deleted gateway
-        mockMvc.perform(get("/http/gateways/GATEWAY00000001"))
+        mockMvc.perform(get("/docs/http-tests/gateways/GATEWAY00000001"))
                 .andExpect(status().isNotFound());
     }
 
@@ -160,7 +160,7 @@ class GatewayIntegrationTest {
         gateway.setMacAddress("AA:BB:CC:DD:EE:FF");
         gateway.setVersion(null);
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ class GatewayIntegrationTest {
     void testCreateGatewayWithEmptySerial() throws Exception {
         Gateway gateway = new Gateway("", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isBadRequest());
@@ -187,7 +187,7 @@ class GatewayIntegrationTest {
     void testUpdateNonExistentGateway() throws Exception {
         Gateway gateway = new Gateway("nonexistent", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
 
-        mockMvc.perform(put("/http/gateways/nonexistent")
+        mockMvc.perform(put("/docs/http-tests/gateways/nonexistent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gateway)))
                 .andExpect(status().isNotFound());
@@ -195,19 +195,19 @@ class GatewayIntegrationTest {
 
     @Test
     void testDeleteNonExistentGateway() throws Exception {
-        mockMvc.perform(delete("/http/gateways/nonexistent"))
+        mockMvc.perform(delete("/docs/http-tests/gateways/nonexistent"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testGetNonExistentGateway() throws Exception {
-        mockMvc.perform(get("/http/gateways/nonexistent"))
+        mockMvc.perform(get("/docs/http-tests/gateways/nonexistent"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testCorsHeaders() throws Exception {
-        mockMvc.perform(get("/http/gateways")
+        mockMvc.perform(get("/docs/http-tests/gateways")
                 .header("Origin", "http://localhost:3000"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"));

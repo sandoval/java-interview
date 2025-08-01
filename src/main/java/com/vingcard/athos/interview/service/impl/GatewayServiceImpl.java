@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.ResourceNotFoundException;
+import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.service.GatewayService;
@@ -30,7 +30,7 @@ public class GatewayServiceImpl implements GatewayService {
 	public ResponseEntity<Gateway> getGatewayBySerial(String serial) {
 		Optional<Gateway> gateway = gatewayRepository.findById(serial);
 		return gateway.map(ResponseEntity::ok)
-				.orElseThrow(() -> new ResourceNotFoundException("Lock not found with serial: " + serial));
+				.orElseThrow(() -> new NotFoundExceptionResponse("Lock not found with serial: " + serial));
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class GatewayServiceImpl implements GatewayService {
 
 			return ResponseEntity.ok(gatewayRepository.save(gateway));
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + serial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class GatewayServiceImpl implements GatewayService {
 			gatewayRepository.deleteById(serial);
 			return ResponseEntity.ok().build();
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + serial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
 		}
 	}
 }

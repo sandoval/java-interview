@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.ResourceNotFoundException;
+import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
 import com.vingcard.athos.interview.service.LockService;
@@ -31,7 +31,7 @@ public class LockServiceImpl implements LockService {
 		Optional<Lock> lock = lockRepository.findById(serial);
 
 		if (lock.isEmpty()) {
-			throw new ResourceNotFoundException("Lock not found with serial: " + serial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
 		}
 
 		return lock.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
@@ -69,7 +69,7 @@ public class LockServiceImpl implements LockService {
 
 			return ResponseEntity.ok(lockRepository.save(lock));
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + serial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class LockServiceImpl implements LockService {
 			lockRepository.deleteById(serial);
 			return ResponseEntity.ok().build();
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + serial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
 		}
 	}
 }

@@ -53,7 +53,7 @@ class GatewayControllerTest {
         
         when(gatewayRepository.findAll()).thenReturn(Arrays.asList(gateway1, gateway2));
 
-        mockMvc.perform(get("/http/gateways"))
+        mockMvc.perform(get("/docs/http-tests/gateways"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].serial").value("GATEWAY00000001"))
@@ -70,7 +70,7 @@ class GatewayControllerTest {
     void getGatewayBySerial_WhenExists_ShouldReturnGateway() throws Exception {
         when(gatewayRepository.findById("GATEWAY00000001")).thenReturn(Optional.of(testGateway));
 
-        mockMvc.perform(get("/http/gateways/GATEWAY00000001"))
+        mockMvc.perform(get("/docs/http-tests/gateways/GATEWAY00000001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serial").value("GATEWAY00000001"))
                 .andExpect(jsonPath("$.macAddress").value("AA:BB:CC:DD:EE:FF"))
@@ -82,7 +82,7 @@ class GatewayControllerTest {
     void getGatewayBySerial_WhenNotExists_ShouldReturn404() throws Exception {
         when(gatewayRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/http/gateways/nonexistent"))
+        mockMvc.perform(get("/docs/http-tests/gateways/nonexistent"))
                 .andExpect(status().isNotFound());
     }
 
@@ -91,7 +91,7 @@ class GatewayControllerTest {
         Gateway newGateway = new Gateway("GATEWAY00000003", "CC:DD:EE:FF:00:11", false, "v2.0.0");
         when(gatewayRepository.save(any(Gateway.class))).thenReturn(newGateway);
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newGateway)))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ class GatewayControllerTest {
     void createGateway_WithEmptySerial_ShouldReturn400() throws Exception {
         Gateway invalidGateway = new Gateway("", "CC:DD:EE:FF:00:11", false, "v2.0.0");
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidGateway)))
                 .andExpect(status().isBadRequest());
@@ -117,7 +117,7 @@ class GatewayControllerTest {
     void createGateway_WithNullSerial_ShouldReturn400() throws Exception {
         Gateway invalidGateway = new Gateway(null, "CC:DD:EE:FF:00:11", false, "v2.0.0");
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidGateway)))
                 .andExpect(status().isBadRequest());
@@ -133,7 +133,7 @@ class GatewayControllerTest {
         Gateway savedGateway = new Gateway("GATEWAY00000004", "DD:EE:FF:00:11:22", false, "");
         when(gatewayRepository.save(any(Gateway.class))).thenReturn(savedGateway);
 
-        mockMvc.perform(post("/http/gateways")
+        mockMvc.perform(post("/docs/http-tests/gateways")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gatewayWithNullVersion)))
                 .andExpect(status().isOk())
@@ -149,7 +149,7 @@ class GatewayControllerTest {
         when(gatewayRepository.findById("GATEWAY00000001")).thenReturn(Optional.of(existingGateway));
         when(gatewayRepository.save(any(Gateway.class))).thenReturn(updatedGateway);
 
-        mockMvc.perform(put("/http/gateways/GATEWAY00000001")
+        mockMvc.perform(put("/docs/http-tests/gateways/GATEWAY00000001")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedGateway)))
                 .andExpect(status().isOk())
@@ -161,7 +161,7 @@ class GatewayControllerTest {
     void updateGateway_WhenNotExists_ShouldReturn404() throws Exception {
         when(gatewayRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/http/gateways/nonexistent")
+        mockMvc.perform(put("/docs/http-tests/gateways/nonexistent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testGateway)))
                 .andExpect(status().isNotFound());
@@ -172,7 +172,7 @@ class GatewayControllerTest {
         when(gatewayRepository.existsById("GATEWAY00000001")).thenReturn(true);
         doNothing().when(gatewayRepository).deleteById("GATEWAY00000001");
 
-        mockMvc.perform(delete("/http/gateways/GATEWAY00000001"))
+        mockMvc.perform(delete("/docs/http-tests/gateways/GATEWAY00000001"))
                 .andExpect(status().isOk());
 
         verify(gatewayRepository).deleteById("GATEWAY00000001");
@@ -182,7 +182,7 @@ class GatewayControllerTest {
     void deleteGateway_WhenNotExists_ShouldReturn404() throws Exception {
         when(gatewayRepository.existsById("nonexistent")).thenReturn(false);
 
-        mockMvc.perform(delete("/http/gateways/nonexistent"))
+        mockMvc.perform(delete("/docs/http-tests/gateways/nonexistent"))
                 .andExpect(status().isNotFound());
 
         verify(gatewayRepository, never()).deleteById(any());

@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.ResourceNotFoundException;
+import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
@@ -32,7 +32,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		List<LockGatewayLink> link = linkRepository.findByLockSerial(lockSerial);
 
 		if (link.isEmpty()) {
-			throw new ResourceNotFoundException("Lock not found with serial: " + lockSerial);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + lockSerial);
 		}
 
 		return link;
@@ -43,7 +43,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		List<LockGatewayLink> link = linkRepository.findByGatewaySerial(gatewaySerial);
 
 		if (link.isEmpty()) {
-			throw new ResourceNotFoundException("Gateway not found with serial: " + gatewaySerial);
+			throw new NotFoundExceptionResponse("Gateway not found with serial: " + gatewaySerial);
 		}
 
 		return link;
@@ -53,7 +53,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 	public ResponseEntity<LockGatewayLink> getLink(String lockSerial, String gatewaySerial) {
 		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
 		Optional<LockGatewayLink> link = linkRepository.findById(id);
-		return link.map(ResponseEntity::ok).orElseThrow(() -> new ResourceNotFoundException("Lock not found with serial: " + id));
+		return link.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundExceptionResponse("Lock not found with serial: " + id));
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 			link.setRssi(linkDetails.getRssi());
 			return ResponseEntity.ok(linkRepository.save(link));
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + id);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + id);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 			linkRepository.deleteById(id);
 			return ResponseEntity.ok().build();
 		} else {
-			throw new ResourceNotFoundException("Lock not found with serial: " + id);
+			throw new NotFoundExceptionResponse("Lock not found with serial: " + id);
 		}
 	}
 }
