@@ -1,7 +1,5 @@
 package com.vingcard.athos.interview.config;
 
-import com.vingcard.athos.interview.exception.auth.CustomAuthenticationEntryPoint;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -16,33 +14,24 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import java.net.URL;
-import java.security.interfaces.RSAPrivateKey;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
-	URL jwkSetUri;
-
-	@Value("${sample.jwe-key-value}")
-	RSAPrivateKey key;
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
-	                                       AccessDeniedHandler accessDeniedHandler,
-	                                       CustomAuthenticationEntryPoint customAuthEntryPoint) throws Exception {
+	                                       AccessDeniedHandler accessDeniedHandler) throws Exception {
 
 		http.authorizeHttpRequests(requests -> requests
 						// Permit all in /auth/**
 						.requestMatchers("/oauth/confirm-email").permitAll()
 						.requestMatchers("/oauth/resend-email").permitAll()
 						.requestMatchers("/oauth/login").permitAll()
+						.requestMatchers("/oauth/register").permitAll()
+						.requestMatchers("/oauth/change-role").hasRole("WRITER")
 
 						// OAuth block admin controls
 						.requestMatchers("/oauth/me").authenticated()
-						.requestMatchers("/oauth/register").hasAnyRole("WRITER")
 
 						// Permit GETs in /api/** for ROLE_WRITER or ROLE_READER
 						.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("WRITER", "READER")

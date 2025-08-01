@@ -5,9 +5,8 @@ Accept: application/json
 Authorization: Bearer {{access_token}}
 
 {
-  "email": "bibica.bassambeth@hotmail.com",
-  "password": "c@I2809P3]7",
-  "role": "WRITER"
+  "email": "lhpetrola@gmail.com",
+  "password": "c@I2809P3]7"
 }
 
 ### Login Writer User
@@ -35,7 +34,11 @@ GET http://localhost:8080/oauth/me
 Authorization: Bearer {{access_token}}
 
 ### Email confirm
-POST http://localhost:8080/oauth/confirm-email?email=lhpetrola@gmail.com.com&code=887078
+POST http://localhost:8080/oauth/confirm-email?email=lhpetrola@gmail.com.com&code=122052
 
 ### Resend Email confim code
 POST http://localhost:8080/oauth/resend-email?email=lhpetrola@gmail.com
+
+### Change Role User
+GET http://localhost:8080/oauth/change-role?email=lhpetrola@gmail.com&role=WRITER
+Authorization: Bearer {{access_token}}

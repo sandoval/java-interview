@@ -35,6 +35,3 @@ aws:
   cognito:
     uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_WH9sgrlAo
     user-pool-id: us-east-1_WH9sgrlAo
-
-sample:
-  jwe-key-value: classpath:simple.priv

@@ -6,7 +6,9 @@ import com.vingcard.athos.interview.persistence.entity.User;
 
 public interface CognitoService {
 
-	User registerUser(String email, String password, RoleEnum role);
+	User registerUser(String email, String password);
+
+	User changeRoleUser(String email, RoleEnum role);
 
 	LoginTokenResponseDto loginUser(String email, String password);
 

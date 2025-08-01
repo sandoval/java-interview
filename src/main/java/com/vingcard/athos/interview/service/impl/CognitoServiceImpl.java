@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,15 +20,6 @@ public class CognitoServiceImpl implements CognitoService {
 
 	@Value("${spring.security.oauth2.client.registration.cognito.client-id}")
 	private String clientId;
-
-	@Value("${spring.security.oauth2.client.registration.cognito.client-secret}")
-	private String clientSecret;
-
-	@Value("${spring.security.oauth2.client.registration.cognito.scope}")
-	private String scope;
-
-	@Value("${spring.security.oauth2.client.provider.cognito.issuer-uri}")
-	private String issuerUri;
 
 	@Value("${aws.cognito.user-pool-id}")
 	private String userPoolId;
@@ -40,7 +32,7 @@ public class CognitoServiceImpl implements CognitoService {
 		this.cognitoIdentityProvider = cognitoIdentityProvider;
 	}
 
-	public User registerUser(String email, String password, RoleEnum role) {
+	public User registerUser(String email, String password) {
 
 		SignUpRequest signUpRequest = new SignUpRequest()
 				.withClientId(clientId)
@@ -49,22 +41,59 @@ public class CognitoServiceImpl implements CognitoService {
 				.withUserAttributes(new AttributeType().withName("email").withValue(email));
 
 		try {
-			SignUpResult signUpResult = cognitoIdentityProvider.signUp(signUpRequest);
+			cognitoIdentityProvider.signUp(signUpRequest);
 
 			AdminAddUserToGroupRequest groupRequest = new AdminAddUserToGroupRequest()
 					.withUserPoolId(userPoolId)
 					.withUsername(email)
-					.withGroupName(role.name());
+					.withGroupName(RoleEnum.READER.name());
 			cognitoIdentityProvider.adminAddUserToGroup(groupRequest);
 
 			User registeredUser = new User();
 			registeredUser.setEmail(email);
-			registeredUser.setRole(role);
+			registeredUser.setRole(RoleEnum.READER);
 			registeredUser.setPassword(password);
 
 			return userRepository.save(registeredUser);
 		} catch (Exception e) {
 			throw new RuntimeException("User registration failed: " + e.getMessage(), e);
+		}
+	}
+
+	public User changeRoleUser(String email, RoleEnum role) {
+
+		try {
+			AdminListGroupsForUserRequest listReq = new AdminListGroupsForUserRequest()
+					.withUserPoolId(userPoolId)
+					.withUsername(email);
+
+			AdminListGroupsForUserResult listRes = cognitoIdentityProvider.adminListGroupsForUser(listReq);
+
+			for (GroupType group : listRes.getGroups()) {
+				cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
+						.withUserPoolId(userPoolId)
+						.withUsername(email)
+						.withGroupName(group.getGroupName()));
+			}
+
+			for (GroupType group : listRes.getGroups()) {
+				cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
+						.withUserPoolId(userPoolId)
+						.withUsername(email)
+						.withGroupName(group.getGroupName()));
+			}
+
+			cognitoIdentityProvider.adminAddUserToGroup(new AdminAddUserToGroupRequest()
+					.withUserPoolId(userPoolId)
+					.withUsername(email)
+					.withGroupName(role.name()));
+
+			User user = userRepository.findByEmailAndVerified(email, true);
+			user.setRole(role);
+
+			return userRepository.save(user);
+		} catch (Exception e) {
+			throw new RuntimeException("User promote failed: " + e.getMessage(), e);
 		}
 	}
 

@@ -3,10 +3,11 @@ package com.vingcard.athos.interview.requests;
 import jakarta.validation.constraints.NotBlank;
 
 public class UserLoginRequest {
-	@NotBlank(message = "Email is required")
+
+	@NotBlank(message = "error.email_required")
 	private String email;
 
-	@NotBlank(message = "Password is required")
+	@NotBlank(message = "error.password_required")
 	private String password;
 
 	public UserLoginRequest(String email, String password) {
