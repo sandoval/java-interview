@@ -1,83 +1,61 @@
 package com.vingcard.athos.interview.controller;
 
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
-import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
+import com.vingcard.athos.interview.service.impl.LockGatewayLinkServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lock-gateway-links")
 public class LockGatewayLinkController {
 
-    private final LockGatewayLinkRepository linkRepository;
+	private final LockGatewayLinkServiceImpl lockGatewayLinkService;
 
-    @Autowired
-    public LockGatewayLinkController(LockGatewayLinkRepository linkRepository) {
-        this.linkRepository = linkRepository;
-    }
+	@Autowired
+	public LockGatewayLinkController(LockGatewayLinkServiceImpl lockGatewayLinkService) {
+		this.lockGatewayLinkService = lockGatewayLinkService;
+	}
 
-    @GetMapping
-    public List<LockGatewayLink> getAllLinks() {
-        return linkRepository.findAll();
-    }
+	@GetMapping
+	public List<LockGatewayLink> getAllLinks() {
+		return this.lockGatewayLinkService.getAllLinks();
+	}
 
-    @GetMapping("/lock/{lockSerial}")
-    public List<LockGatewayLink> getLinksByLockSerial(@PathVariable String lockSerial) {
-        return linkRepository.findByLockSerial(lockSerial);
-    }
+	@GetMapping("/lock/{lockSerial}")
+	public List<LockGatewayLink> getLinksByLockSerial(@PathVariable String lockSerial) {
+		return this.lockGatewayLinkService.getLinksByLockSerial(lockSerial);
+	}
 
-    @GetMapping("/gateway/{gatewaySerial}")
-    public List<LockGatewayLink> getLinksByGatewaySerial(@PathVariable String gatewaySerial) {
-        return linkRepository.findByGatewaySerial(gatewaySerial);
-    }
+	@GetMapping("/gateway/{gatewaySerial}")
+	public List<LockGatewayLink> getLinksByGatewaySerial(@PathVariable String gatewaySerial) {
+		return this.lockGatewayLinkService.getLinksByGatewaySerial(gatewaySerial);
+	}
 
-    @GetMapping("/{lockSerial}/{gatewaySerial}")
-    public ResponseEntity<LockGatewayLink> getLink(@PathVariable String lockSerial, @PathVariable String gatewaySerial) {
-        LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
-        Optional<LockGatewayLink> link = linkRepository.findById(id);
-        return link.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
+	@GetMapping("/{lockSerial}/{gatewaySerial}")
+	public ResponseEntity<LockGatewayLink> getLink(@PathVariable String lockSerial,
+	                                               @PathVariable String gatewaySerial) {
+		return this.lockGatewayLinkService.getLink(lockSerial, gatewaySerial);
+	}
 
-    @PostMapping
-    public LockGatewayLink createLink(@Valid @RequestBody LockGatewayLink link) {
-        if (link.getLockSerial() == null || link.getLockSerial().trim().isEmpty()) {
-            throw new IllegalArgumentException("Lock serial cannot be empty");
-        }
-        if (link.getGatewaySerial() == null || link.getGatewaySerial().trim().isEmpty()) {
-            throw new IllegalArgumentException("Gateway serial cannot be empty");
-        }
-        return linkRepository.save(link);
-    }
+	@PostMapping
+	public LockGatewayLink createLink(@Valid @RequestBody LockGatewayLink link) {
+		return this.lockGatewayLinkService.createLink(link);
+	}
 
-    @PutMapping("/{lockSerial}/{gatewaySerial}")
-    public ResponseEntity<LockGatewayLink> updateLink(@PathVariable String lockSerial, 
-                                                     @PathVariable String gatewaySerial, 
-                                                     @Valid @RequestBody LockGatewayLink linkDetails) {
-        LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
-        Optional<LockGatewayLink> optionalLink = linkRepository.findById(id);
-        if (optionalLink.isPresent()) {
-            LockGatewayLink link = optionalLink.get();
-            link.setRssi(linkDetails.getRssi());
-            return ResponseEntity.ok(linkRepository.save(link));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@PutMapping("/{lockSerial}/{gatewaySerial}")
+	public ResponseEntity<LockGatewayLink> updateLink(@PathVariable String lockSerial,
+	                                                  @PathVariable String gatewaySerial,
+	                                                  @Valid @RequestBody LockGatewayLink linkDetails) {
+		return this.lockGatewayLinkService.updateLink(lockSerial, gatewaySerial, linkDetails);
+	}
 
-    @DeleteMapping("/{lockSerial}/{gatewaySerial}")
-    public ResponseEntity<?> deleteLink(@PathVariable String lockSerial, @PathVariable String gatewaySerial) {
-        LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
-        if (linkRepository.existsById(id)) {
-            linkRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@DeleteMapping("/{lockSerial}/{gatewaySerial}")
+	public ResponseEntity<?> deleteLink(@PathVariable String lockSerial,
+	                                    @PathVariable String gatewaySerial) {
+		return this.lockGatewayLinkService.deleteLink(lockSerial, gatewaySerial);
+	}
 } 

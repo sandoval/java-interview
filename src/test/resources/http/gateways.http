@@ -1,0 +1,39 @@
+### Get all Gateways
+GET http://localhost:8080/api/gateways
+Accept: application/json
+
+###
+
+### Get Gateway by Serial
+GET http://localhost:8080/api/gateways/ALKG000000000606
+Accept: application/json
+
+###
+
+### Create a new Gateway
+POST http://localhost:8080/api/gateways
+Content-Type: application/json
+
+{
+  "serial": "ALKG000000000606",
+  "macAddress": "11:22:33:44:55:66",
+  "version": "v4.0.0"
+}
+
+###
+
+### Update an existing Gateway
+PUT http://localhost:8080/api/gateways/ALKG000000000606
+Content-Type: application/json
+
+{
+  "serial": "ALKG000000000606",
+  "macAddress": "11:22:33:44:55:66",
+  "online": true,
+  "version": "v4.1.0"
+}
+
+###
+
+### Delete a Gateway
+DELETE http://localhost:8080/api/gateways/ALKG000000000606
