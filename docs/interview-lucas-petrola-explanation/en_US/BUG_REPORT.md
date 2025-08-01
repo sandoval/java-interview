@@ -14,45 +14,24 @@ insert data into the `lock_gateway_link` table.
 Implement the following code snippet:
 
 ```java
-if(lockGatewayLinkRepository.count() <gatewayRepository.
-
-count()){
+if (lockGatewayLinkRepository.count() < gatewayRepository.count()) {
 LockGatewayLink lockGatewayLink = new LockGatewayLink();
 
 List<Lock> lockResult = lockRepository.findAll();
 List<Gateway> gatewayResult = gatewayRepository.findAll();
 
-    for(
-int i = 0; i <gatewayResult.
-
-size();
-
-i++){
-		if(i <gatewayResult.
-
-size() -1){
-		lockGatewayLink.
-
-setGatewaySerial(gatewayResult.get(i).
-
-getSerial());
-		lockGatewayLink.
-
-setLockSerial(lockResult.get(i).
-
-getSerial());
-		lockGatewayLink.
-
-setRssi(randomRssi());
-		}else{
+	for (int i = 0; i < gatewayResult.size(); i++) {
+		if (i < gatewayResult.size() - 1) {
+		lockGatewayLink.setGatewaySerial(gatewayResult.get(i).getSerial());
+		lockGatewayLink.setLockSerial(lockResult.get(i).getSerial());
+		lockGatewayLink.setRssi(randomRssi());
+		} else {
 		break;
 		}
 
-		lockGatewayLinkRepository.
-
-save(lockGatewayLink);
-    }
-		    }
+		lockGatewayLinkRepository.save(lockGatewayLink);
+	}
+}
 ```
 
 Also, declare a method to generate random RSSI values:
