@@ -36,7 +36,7 @@ class DummyDataLoaderTest {
     }
 
     @Test
-    void testDataLoaderCreatesGateways() throws Exception {
+    void testDataLoaderCreatesGateways() {
         // Run the data loader
         dummyDataLoader.run();
 
@@ -57,7 +57,7 @@ class DummyDataLoaderTest {
     }
 
     @Test
-    void testDataLoaderCreatesLocks() throws Exception {
+    void testDataLoaderCreatesLocks() {
         // Run the data loader
         dummyDataLoader.run();
 
@@ -79,7 +79,7 @@ class DummyDataLoaderTest {
     }
 
     @Test
-    void testDataLoaderDoesNotDuplicateData() throws Exception {
+    void testDataLoaderDoesNotDuplicateData() {
         // Run the data loader twice
         dummyDataLoader.run();
         dummyDataLoader.run();
@@ -90,7 +90,7 @@ class DummyDataLoaderTest {
     }
 
     @Test
-    void testDataLoaderWithExistingData() throws Exception {
+    void testDataLoaderWithExistingData() {
         // Create some existing data
         Gateway existingGateway = new Gateway("ALKG000000000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
         Lock existingLock = new Lock("ALKS000000000001", "Existing Lock", "11:22:33:44:55:66", true, "v1.0.0");
