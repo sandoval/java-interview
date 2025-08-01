@@ -13,7 +13,7 @@ locks and gateways in an IoT system.
 
 ### 0. Configure enviromnent 
 
-Use the environment variables in ``java.env.example`` in the IntelliJ SpringBoot service to perform the build. It is located at ``docs/interview-lucas-petrola-explanation``
+Use the environment variables in java.env.example in the IntelliJ SpringBoot service to perform the build. It can be found in the forwarded email.
 
 You also need to export the values from ``docker.env.example`` in the Docker service. This will generate the database environment with the correct configuration. 
 
