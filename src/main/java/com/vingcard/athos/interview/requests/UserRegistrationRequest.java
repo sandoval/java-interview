@@ -7,10 +7,10 @@ import java.util.Objects;
 
 public class UserRegistrationRequest {
 
-	@NotBlank(message = "error.password_required")
+	@NotBlank(message = "Password is required.")
 	private String password;
 
-	@Email(message = "error.invalid_email_format")
+	@Email(message = "Invalid email format.")
 	private String email;
 
 	public UserRegistrationRequest(String password, String email) {

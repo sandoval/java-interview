@@ -76,7 +76,7 @@ public class OAuthController {
 			this.cognitoService.confirmEmail(email, code);
 			return ResponseEntity.ok(new ValidateEmailResponseDto(true,
 					email,
-					"info.email_confirmed"));
+					"Email successfully confirmed."));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ValidateEmailResponseDto(false, email, e.getMessage()));
@@ -89,10 +89,10 @@ public class OAuthController {
 			this.cognitoService.resendConfirmationCode(email);
 			return ResponseEntity.ok(new ResendEmailResponseDto(true,
 					email,
-					"{info.email_resent}"));
+					"Verification email successfully resent."));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ResendEmailResponseDto(false, email, "{info.email_resent}"));
+					.body(new ResendEmailResponseDto(false, email, "Verification email resent failed."));
 		}
 	}
 

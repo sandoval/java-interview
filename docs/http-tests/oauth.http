@@ -2,7 +2,6 @@
 POST http://localhost:8080/oauth/register
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer {{access_token}}
 
 {
   "email": "lhpetrola@gmail.com",
@@ -34,11 +33,11 @@ GET http://localhost:8080/oauth/me
 Authorization: Bearer {{access_token}}
 
 ### Email confirm
-POST http://localhost:8080/oauth/confirm-email?email=lhpetrola@gmail.com.com&code=122052
+POST http://localhost:8080/oauth/confirm-email?email=lhpetrola@gmail.com&code=858322
 
 ### Resend Email confim code
 POST http://localhost:8080/oauth/resend-email?email=lhpetrola@gmail.com
 
 ### Change Role User
-GET http://localhost:8080/oauth/change-role?email=lhpetrola@gmail.com&role=WRITER
+GET http://localhost:8080/oauth/change-role?email=lhpetrola@gmail.com&role=READER
 Authorization: Bearer {{access_token}}

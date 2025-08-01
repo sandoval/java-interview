@@ -9,7 +9,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users")
+@Table(
+		name = "users",
+		uniqueConstraints = {
+				@UniqueConstraint(columnNames = "email"),
+		})
 public class User {
 	@jakarta.persistence.Id
 	@Id

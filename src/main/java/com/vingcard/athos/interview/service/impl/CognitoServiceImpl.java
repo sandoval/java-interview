@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -129,7 +128,7 @@ public class CognitoServiceImpl implements CognitoService {
 					.withUsername(email)
 					.withConfirmationCode(confirmationCode);
 
-			User user = this.userRepository.findByEmailAndVerified(email, false);
+			User user = this.userRepository.findByEmail(email);
 			user.setVerified(true);
 			user.setUpdateAt(LocalDateTime.now());
 

@@ -21,16 +21,16 @@ spring:
       client:
         registration:
           cognito:
-            client-id: 5hhk896gi37iaqrimohnl3q04s
-            client-secret: vcvuh54mit1ojblfgmms89d3skprapcn0k3aqo0evrl9mc1lnh8
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
             scope: openid
         provider:
           cognito:
             issuer-uri: ${aws.cognito.uri}
 
 aws:
-  accessKeyId: AKIAUFAKZJPMGQADVKK5
-  secretKey: 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
+  accessKeyId: ${ACCESS_KEY_ID}
+  secretKey: ${SECRET_KEY}
   region: us-east-1
   cognito:
     uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_WH9sgrlAo

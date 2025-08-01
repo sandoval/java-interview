@@ -28,10 +28,10 @@ public class SecurityConfig {
 						.requestMatchers("/oauth/resend-email").permitAll()
 						.requestMatchers("/oauth/login").permitAll()
 						.requestMatchers("/oauth/register").permitAll()
-						.requestMatchers("/oauth/change-role").hasRole("WRITER")
 
 						// OAuth block admin controls
 						.requestMatchers("/oauth/me").authenticated()
+						.requestMatchers("/oauth/change-role").hasRole("WRITER")
 
 						// Permit GETs in /api/** for ROLE_WRITER or ROLE_READER
 						.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("WRITER", "READER")
@@ -43,11 +43,12 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer((oauth2) ->
-						oauth2
-								.jwt(jwt -> jwt
-										.jwtAuthenticationConverter(jwtAuthenticationConverter())
-								)
-								.accessDeniedHandler(accessDeniedHandler)
+						oauth2.jwt(jwt -> jwt
+								.jwtAuthenticationConverter(jwtAuthenticationConverter())
+						)
+				)
+				.exceptionHandling(ex -> ex
+						.accessDeniedHandler(accessDeniedHandler)
 				);
 
 		http.csrf(AbstractHttpConfigurer::disable);
