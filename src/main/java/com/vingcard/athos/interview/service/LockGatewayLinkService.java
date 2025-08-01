@@ -22,4 +22,5 @@ public interface LockGatewayLinkService {
 	                                           LockGatewayLink linkDetails);
 
 	ResponseEntity<?> deleteLink(String lockSerial, String gatewaySerial);
+
 }

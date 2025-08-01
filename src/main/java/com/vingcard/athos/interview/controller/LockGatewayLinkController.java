@@ -3,7 +3,7 @@ package com.vingcard.athos.interview.controller;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import com.vingcard.athos.interview.service.impl.LockGatewayLinkServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/lock-gateway-links")
+@AllArgsConstructor
 public class LockGatewayLinkController {
 
 	private final LockGatewayLinkServiceImpl lockGatewayLinkService;
-
-	@Autowired
-	public LockGatewayLinkController(LockGatewayLinkServiceImpl lockGatewayLinkService) {
-		this.lockGatewayLinkService = lockGatewayLinkService;
-	}
 
 	@GetMapping
 	public List<LockGatewayLink> getAllLinks() {

@@ -3,7 +3,7 @@ package com.vingcard.athos.interview.controller;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.service.impl.GatewayServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/gateways")
+@AllArgsConstructor
 public class GatewayController {
 
 	private final GatewayServiceImpl gatewayService;
-
-	@Autowired
-	public GatewayController(GatewayServiceImpl gatewayService) {
-		this.gatewayService = gatewayService;
-	}
 
 	@GetMapping
 	public List<Gateway> getAllGateways() {

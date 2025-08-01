@@ -42,21 +42,27 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("WRITER")
 						.anyRequest().authenticated()
 				)
+
+				// Convert Jwt key response
 				.oauth2ResourceServer((oauth2) ->
 						oauth2.jwt(jwt -> jwt
 								.jwtAuthenticationConverter(jwtAuthenticationConverter())
-						)
-				)
+						))
+
+				// Handle exception from AWS Cognito response
 				.exceptionHandling(ex -> ex
-						.accessDeniedHandler(accessDeniedHandler)
-				);
+						.accessDeniedHandler(accessDeniedHandler));
 
 		http.csrf(AbstractHttpConfigurer::disable);
-
 		return http.build();
 	}
 
 
+	/**
+	 * Convert JWT key from authentication response
+	 *
+	 * @return Converted jwt key
+	 */
 	public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
 		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");

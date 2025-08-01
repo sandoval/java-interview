@@ -6,7 +6,7 @@ import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,21 +16,20 @@ import java.util.Random;
 
 @Component
 @org.springframework.context.annotation.Profile("dummydata")
+@AllArgsConstructor
 public class DummyDataLoader implements CommandLineRunner {
+
 	private final GatewayRepository gatewayRepository;
 	private final LockRepository lockRepository;
 	private final LockGatewayLinkRepository lockGatewayLinkRepository;
 	private final Random random = new Random();
 
-	@Autowired
-	public DummyDataLoader(GatewayRepository gatewayRepository,
-	                       LockRepository lockRepository,
-	                       LockGatewayLinkRepository lockGatewayLinkRepository) {
-		this.gatewayRepository = gatewayRepository;
-		this.lockRepository = lockRepository;
-		this.lockGatewayLinkRepository = lockGatewayLinkRepository;
-	}
 
+	/**
+	 * Populate the local development Database with Dummy Data
+	 *
+	 * @param args Execution parameters
+	 */
 	@Override
 	public void run(String... args) {
 		if (gatewayRepository.count() < 10) {
@@ -74,7 +73,13 @@ public class DummyDataLoader implements CommandLineRunner {
 		}
 	}
 
-	public String generateRandomMac() {
+
+	/**
+	 * This method generate Random Mac Address for dummy Data Population
+	 *
+	 * @return String
+	 */
+	public String randomMac() {
 		byte[] macAddr = new byte[6];
 		random.nextBytes(macAddr);
 		StringBuilder sb = new StringBuilder(17);
@@ -84,13 +89,16 @@ public class DummyDataLoader implements CommandLineRunner {
 			sb.append(String.format(Locale.US, "%02X", b));
 		}
 
+		// Random Mac Address Generated
 		return sb.toString();
 	}
 
-	private String randomMac() {
-		return generateRandomMac();
-	}
 
+	/**
+	 * This method generate Random RSSi Indicator for dummy Data Population
+	 *
+	 * @return double
+	 */
 	private static double randomRssi() {
 		double minRssi = -100.0;
 		double maxRssi = -30.0;

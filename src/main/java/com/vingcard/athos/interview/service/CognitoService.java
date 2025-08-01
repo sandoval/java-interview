@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.service;
 
-import com.vingcard.athos.interview.dto.LoginTokenResponseDto;
+import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
 import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.persistence.entity.User;
 
@@ -15,4 +15,5 @@ public interface CognitoService {
 	void confirmEmail(String email, String confirmationCode);
 
 	void resendConfirmationCode(String email);
+
 }

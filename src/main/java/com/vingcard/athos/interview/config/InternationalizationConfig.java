@@ -33,7 +33,7 @@ public class InternationalizationConfig {
 	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-		lci.setParamName("lang"); // ?lang=pt
+		lci.setParamName("lang");
 		return lci;
 	}
 

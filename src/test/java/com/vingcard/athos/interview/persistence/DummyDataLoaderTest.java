@@ -113,8 +113,8 @@ class DummyDataLoaderTest {
     @Test
     void testMacAddressGeneration() {
         // Test the MAC address generation method directly
-        String mac1 = dummyDataLoader.generateRandomMac();
-        String mac2 = dummyDataLoader.generateRandomMac();
+        String mac1 = dummyDataLoader.randomMac();
+        String mac2 = dummyDataLoader.randomMac();
 
         // Verify MAC address format
         assertTrue(isValidMacAddress(mac1), "Generated MAC address should be valid");

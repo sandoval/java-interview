@@ -1,16 +1,16 @@
 package com.vingcard.athos.interview.controller;
 
-import com.vingcard.athos.interview.dto.LoginTokenResponseDto;
-import com.vingcard.athos.interview.dto.ResendEmailResponseDto;
-import com.vingcard.athos.interview.dto.ValidateEmailResponseDto;
+import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
+import com.vingcard.athos.interview.dto.request.UserLoginRequestDto;
+import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.persistence.entity.User;
-import com.vingcard.athos.interview.requests.UserLoginRequest;
-import com.vingcard.athos.interview.requests.UserRegistrationRequest;
 import com.vingcard.athos.interview.service.CognitoService;
 import com.vingcard.athos.interview.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,21 +22,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/oauth")
+@AllArgsConstructor
 public class OAuthController {
 
 	private final UserServiceImpl userService;
 	private final CognitoService cognitoService;
 
-	@Autowired
-	public OAuthController(UserServiceImpl userService,
-	                       CognitoService cognitoService) {
-		this.userService = userService;
-		this.cognitoService = cognitoService;
-	}
-
 	@PostMapping(value = "/register", consumes = {"application/json"})
-	public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationRequest userRegistrationRequest) {
-		User registeredUser = this.userService.registerUser(userRegistrationRequest);
+	public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationRequestDto userRegistrationRequestDto) {
+		User registeredUser = this.userService.registerUser(userRegistrationRequestDto);
 
 		if (registeredUser != null) {
 			return ResponseEntity.ok(registeredUser);
@@ -46,9 +40,11 @@ public class OAuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginTokenResponseDto> loginUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
-		LoginTokenResponseDto tokenResponseDto = userService.loginUser(userLoginRequest.getEmail(),
-				userLoginRequest.getPassword());
+	public ResponseEntity<LoginTokenResponseDto> loginUser(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto) {
+		LoginTokenResponseDto tokenResponseDto = userService.loginUser(
+				userLoginRequestDto.email(),
+				userLoginRequestDto.password()
+		);
 
 		if (tokenResponseDto != null) {
 			return ResponseEntity.ok(tokenResponseDto);

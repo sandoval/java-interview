@@ -2,12 +2,13 @@ package com.vingcard.athos.interview.service.impl;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
-import com.vingcard.athos.interview.dto.LoginTokenResponseDto;
+import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
 import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
 import com.vingcard.athos.interview.persistence.entity.User;
 import com.vingcard.athos.interview.persistence.repository.UserRepository;
 import com.vingcard.athos.interview.service.CognitoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +27,19 @@ public class CognitoServiceImpl implements CognitoService {
 	private final AWSCognitoIdentityProvider cognitoIdentityProvider;
 	private final UserRepository userRepository;
 
-	public CognitoServiceImpl(UserRepository userRepository, AWSCognitoIdentityProvider cognitoIdentityProvider) {
-		this.userRepository = userRepository;
+	@Autowired
+	public CognitoServiceImpl(AWSCognitoIdentityProvider cognitoIdentityProvider, UserRepository userRepository) {
 		this.cognitoIdentityProvider = cognitoIdentityProvider;
+		this.userRepository = userRepository;
 	}
 
+	/**
+	 * Create new user account from AWS Cognito and add in database
+	 *
+	 * @param email    User email
+	 * @param password User Password
+	 * @return Newly created User Object
+	 */
 	public User registerUser(String email, String password) {
 
 		SignUpRequest signUpRequest = new SignUpRequest()
@@ -59,6 +68,14 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
+
+	/**
+	 * Change the user access profile
+	 *
+	 * @param email User email
+	 * @param role  New user Role
+	 * @return Updated suer Object
+	 */
 	public User changeRoleUser(String email, RoleEnum role) {
 
 		try {
@@ -96,6 +113,14 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
+
+	/**
+	 * Login user with AWS Cognito
+	 *
+	 * @param email    User email
+	 * @param password User password
+	 * @return Access token and refresh token from AWS Cognito
+	 */
 	public LoginTokenResponseDto loginUser(String email, String password) {
 
 		InitiateAuthRequest authRequest = new InitiateAuthRequest()
@@ -121,6 +146,13 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
+
+	/**
+	 * Confirm new email user using code received by email
+	 *
+	 * @param email            Email to confirm
+	 * @param confirmationCode Code received by email
+	 */
 	public void confirmEmail(String email, String confirmationCode) {
 		try {
 			ConfirmSignUpRequest confirmRequest = new ConfirmSignUpRequest()
@@ -146,6 +178,12 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
+
+	/**
+	 * Resend confirmation code to user email
+	 *
+	 * @param email Email to send confirmation code
+	 */
 	public void resendConfirmationCode(String email) {
 		try {
 			ResendConfirmationCodeRequest resendRequest = new ResendConfirmationCodeRequest()

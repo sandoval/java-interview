@@ -5,7 +5,7 @@ import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.service.LockGatewayLinkService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +13,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 
 	private final LockGatewayLinkRepository linkRepository;
 
-	@Autowired
-	public LockGatewayLinkServiceImpl(LockGatewayLinkRepository linkRepository) {
-		this.linkRepository = linkRepository;
-	}
 
+	/**
+	 * Return all existing Lock and Gateway links
+	 *
+	 * @return List of Lock and Gateway link
+	 */
 	@Override
 	public List<LockGatewayLink> getAllLinks() {
 		return linkRepository.findAll();
 	}
 
+
+	/**
+	 * Return existing link by lock serial ID
+	 *
+	 * @param lockSerial Lock Serial ID
+	 * @return List of link object
+	 */
 	@Override
 	public List<LockGatewayLink> getLinksByLockSerial(String lockSerial) {
 		List<LockGatewayLink> link = linkRepository.findByLockSerial(lockSerial);
@@ -38,6 +47,13 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		return link;
 	}
 
+
+	/**
+	 * Return existing link by gateway serial ID
+	 *
+	 * @param gatewaySerial Gateway Serial ID
+	 * @return List of link object
+	 */
 	@Override
 	public List<LockGatewayLink> getLinksByGatewaySerial(String gatewaySerial) {
 		List<LockGatewayLink> link = linkRepository.findByGatewaySerial(gatewaySerial);
@@ -49,6 +65,14 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		return link;
 	}
 
+
+	/**
+	 * Return lock and gateway link by Lock Serial ID and Gateway Serial ID
+	 *
+	 * @param lockSerial    Lock Serial ID
+	 * @param gatewaySerial Gateway Serial ID
+	 * @return Status code and Lock and gateway link filtered by Lock serial ID and Gateway serial ID
+	 */
 	@Override
 	public ResponseEntity<LockGatewayLink> getLink(String lockSerial, String gatewaySerial) {
 		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
@@ -56,6 +80,13 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		return link.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundExceptionResponse("Lock not found with serial: " + id));
 	}
 
+
+	/**
+	 * Register new lock and gateway link
+	 *
+	 * @param link Lock gateway object
+	 * @return Newly gateway link created
+	 */
 	@Override
 	public LockGatewayLink createLink(LockGatewayLink link) {
 		if (link.getLockSerial() == null || link.getLockSerial().trim().isEmpty()) {
@@ -69,6 +100,15 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		return linkRepository.save(link);
 	}
 
+
+	/**
+	 * Update existing gateway and lock link from database
+	 *
+	 * @param lockSerial    Lock Serial ID
+	 * @param gatewaySerial Gateway Serial ID
+	 * @param linkDetails   Lock gateway Object
+	 * @return Status code and Lock gateway link object
+	 */
 	@Override
 	public ResponseEntity<LockGatewayLink> updateLink(String lockSerial,
 	                                                  String gatewaySerial,
@@ -85,6 +125,12 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		}
 	}
 
+
+	/**
+	 * @param lockSerial    Lock Serial ID
+	 * @param gatewaySerial Gateway Serial ID
+	 * @return Status code from link deletion
+	 */
 	@Override
 	public ResponseEntity<?> deleteLink(String lockSerial, String gatewaySerial) {
 		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);

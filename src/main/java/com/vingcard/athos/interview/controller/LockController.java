@@ -3,7 +3,7 @@ package com.vingcard.athos.interview.controller;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.service.impl.LockServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/locks")
+@AllArgsConstructor
 public class LockController {
 
 	private final LockServiceImpl lockService;
-
-	@Autowired
-	public LockController(LockServiceImpl lockService) {
-		this.lockService = lockService;
-	}
 
 	@GetMapping
 	public List<Lock> getAllLocks() {
