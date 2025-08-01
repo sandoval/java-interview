@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class CustomAccessDeniedEntryPoint implements AccessDeniedHandler {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 

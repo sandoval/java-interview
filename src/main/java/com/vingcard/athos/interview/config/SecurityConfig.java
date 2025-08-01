@@ -1,5 +1,6 @@
 package com.vingcard.athos.interview.config;
 
+import com.vingcard.athos.interview.exception.auth.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -20,7 +21,8 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
-	                                       AccessDeniedHandler accessDeniedHandler) throws Exception {
+	                                       AccessDeniedHandler accessDeniedHandler,
+	                                       CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
 		http.authorizeHttpRequests(requests -> requests
 						// Permit all in /auth/**
@@ -43,15 +45,20 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 				)
 
-				// Convert Jwt key response
-				.oauth2ResourceServer((oauth2) ->
-						oauth2.jwt(jwt -> jwt
-								.jwtAuthenticationConverter(jwtAuthenticationConverter())
-						))
-
 				// Handle exception from AWS Cognito response
 				.exceptionHandling(ex -> ex
-						.accessDeniedHandler(accessDeniedHandler));
+						.authenticationEntryPoint(customAuthenticationEntryPoint)
+						.accessDeniedHandler(accessDeniedHandler)
+				)
+
+				// Convert Jwt key response
+				.oauth2ResourceServer((oauth2) -> oauth2
+						.authenticationEntryPoint(customAuthenticationEntryPoint)
+						.accessDeniedHandler(accessDeniedHandler)
+						.jwt(jwt -> jwt
+								.jwtAuthenticationConverter(jwtAuthenticationConverter())
+						)
+				);
 
 		http.csrf(AbstractHttpConfigurer::disable);
 		return http.build();
