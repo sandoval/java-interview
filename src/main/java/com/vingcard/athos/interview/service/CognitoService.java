@@ -8,12 +8,14 @@ public interface CognitoService {
 
 	User registerUser(String email, String password);
 
-	User changeRoleUser(String email, RoleEnum role);
-
 	LoginTokenResponseDto loginUser(String email, String password);
 
 	void confirmEmail(String email, String confirmationCode);
 
 	void resendConfirmationCode(String email);
+
+	User revokeUserRole(String email, RoleEnum role);
+
+	User grantUserRole(String email, RoleEnum role);
 
 }

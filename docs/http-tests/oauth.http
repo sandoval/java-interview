@@ -4,7 +4,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "lhpetrola@gmail.com",
+  "email": "bibica.bassambeth@hotmail.com",
   "password": "c@I2809P3]7"
 }
 
@@ -44,6 +44,6 @@ POST {{baseUrl}}/oauth/confirm-email?email=lhpetrola@gmail.com&code=482045
 POST {{baseUrl}}/oauth/resend-email?email=lhpetrola@gmail.com
 
 
-### Change role User
-GET {{baseUrl}}/oauth/change-role?email=lhpetrola@gmail.com&role=READER
+### Revoke User role
+GET {{baseUrl}}/oauth/revoke-user-role?email=lhpetrola@gmail.com&role=READER
 Authorization: Bearer {{accessToken}}

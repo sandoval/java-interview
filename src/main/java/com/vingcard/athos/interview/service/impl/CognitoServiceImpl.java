@@ -68,48 +68,64 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
-
 	/**
-	 * Change the user access profile
+	 * Add user to Role Group
 	 *
 	 * @param email User email
 	 * @param role  New user Role
-	 * @return Updated suer Object
+	 * @return Updated user Object
 	 */
-	public User changeRoleUser(String email, RoleEnum role) {
-
+	public User grantUserRole(String email, RoleEnum role) {
 		try {
-			AdminListGroupsForUserRequest listReq = new AdminListGroupsForUserRequest()
-					.withUserPoolId(userPoolId)
-					.withUsername(email);
-
-			AdminListGroupsForUserResult listRes = cognitoIdentityProvider.adminListGroupsForUser(listReq);
-
-			for (GroupType group : listRes.getGroups()) {
-				cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
-						.withUserPoolId(userPoolId)
-						.withUsername(email)
-						.withGroupName(group.getGroupName()));
-			}
-
-			for (GroupType group : listRes.getGroups()) {
-				cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
-						.withUserPoolId(userPoolId)
-						.withUsername(email)
-						.withGroupName(group.getGroupName()));
-			}
-
 			cognitoIdentityProvider.adminAddUserToGroup(new AdminAddUserToGroupRequest()
 					.withUserPoolId(userPoolId)
 					.withUsername(email)
 					.withGroupName(role.name()));
 
 			User user = userRepository.findByEmailAndVerified(email, true);
+
+			if (user == null) {
+				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+			}
+
+			// If Exists update database
+			user.setUpdateAt(LocalDateTime.now());
 			user.setRole(role);
 
 			return userRepository.save(user);
 		} catch (Exception e) {
-			throw new RuntimeException("User promote failed: " + e.getMessage(), e);
+			throw new RuntimeException(String.format("user role concession failed with message: %s", e.getMessage()));
+		}
+	}
+
+
+	/**
+	 * Remove user to Role Group
+	 *
+	 * @param email User email
+	 * @param role  New user Role
+	 * @return Updated user Object
+	 */
+	public User revokeUserRole(String email, RoleEnum role) {
+		try {
+			cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
+					.withUserPoolId(userPoolId)
+					.withUsername(email)
+					.withGroupName(role.name()));
+
+			User user = userRepository.findByEmailAndVerified(email, true);
+
+			if (user == null) {
+				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+			}
+
+			// If Exists update database
+			user.setRole(role);
+			user.setUpdateAt(LocalDateTime.now());
+
+			return userRepository.save(user);
+		} catch (Exception e) {
+			throw new RuntimeException(String.format("user role revocation failed with message: %s", e.getMessage()));
 		}
 	}
 

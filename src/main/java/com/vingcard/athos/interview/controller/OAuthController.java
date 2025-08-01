@@ -1,10 +1,10 @@
 package com.vingcard.athos.interview.controller;
 
+import com.vingcard.athos.interview.dto.request.UserLoginRequestDto;
+import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
 import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
 import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.dto.request.UserLoginRequestDto;
-import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.persistence.entity.User;
 import com.vingcard.athos.interview.service.CognitoService;
@@ -92,8 +92,31 @@ public class OAuthController {
 		}
 	}
 
-	@GetMapping("/change-role")
-	public User changeRoleUser(@RequestParam String email, @RequestParam RoleEnum role) {
-		return this.cognitoService.changeRoleUser(email, role);
+
+	/**
+	 * Revoke Role to User
+	 * Path: /api/oauth/revoke-user-role
+	 *
+	 * @param email User Email
+	 * @param role  Role to revoke
+	 * @return Return updated user
+	 */
+	@GetMapping("/revoke-user-role")
+	public User revokeUserRole(@RequestParam String email, @RequestParam RoleEnum role) {
+		return this.cognitoService.revokeUserRole(email, role);
+	}
+
+
+	/**
+	 * Grant Role to User
+	 * Path: /api/oauth/grant-user-role
+	 *
+	 * @param email User Email
+	 * @param role  Role to revoke
+	 * @return Return updated user
+	 */
+	@GetMapping("/grant-user-role")
+	public User grantUserRole(@RequestParam String email, @RequestParam RoleEnum role) {
+		return this.cognitoService.grantUserRole(email, role);
 	}
 }
