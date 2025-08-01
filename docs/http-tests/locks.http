@@ -1,17 +1,19 @@
 ### Get all Locks
-GET http://localhost:8080/api/locks
+GET {{baseUrl}}/api/locks
 Accept: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
-### Get Lock by Serial
-GET http://localhost:8080/api/locks/ALKS000000000017
+
+### Get lock by serial
+GET {{baseUrl}}/api/locks/ALKS000000000017
 Accept: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
+
 
 ### Create a new Lock
-POST http://localhost:8080/api/locks
+POST {{baseUrl}}/api/locks
 Content-Type: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
 {
   "serial": "ALKS000000000999",
@@ -21,10 +23,11 @@ Authorization: Bearer {{access_token}}
   "version": "v3.0.0"
 }
 
+
 ### Update an existing Lock
-PUT http://localhost:8080/api/locks/ALKS000000000999
+PUT {{baseUrl}}/api/locks/ALKS000000000999
 Content-Type: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
 {
   "serial": "ALKS000000000999",
@@ -34,6 +37,7 @@ Authorization: Bearer {{access_token}}
   "version": "v3.1.0"
 }
 
-### Delete a Lock
-DELETE http://localhost:8080/api/locks/ALKS000000000999
-Authorization: Bearer {{access_token}}
+
+### Delete a lock
+DELETE {{baseUrl}}/api/locks/ALKS000000000999
+Authorization: Bearer {{accessToken}}

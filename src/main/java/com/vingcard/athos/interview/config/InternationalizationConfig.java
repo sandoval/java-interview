@@ -26,7 +26,7 @@ public class InternationalizationConfig {
 	@Bean
 	public LocaleResolver localeResolver() {
 		AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
-		resolver.setDefaultLocale(new Locale("en", "US"));
+		resolver.setDefaultLocale(Locale.of("en", "US"));
 		return resolver;
 	}
 

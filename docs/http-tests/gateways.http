@@ -1,17 +1,19 @@
 ### Get all Gateways
-GET http://localhost:8080/api/gateways
+GET {{baseUrl}}/api/gateways
 Accept: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
+
 
 ### Get Gateway by Serial
-GET http://localhost:8080/api/gateways/ALKG000000000606
+GET {{baseUrl}}/api/gateways/ALKG000000000606
 Accept: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
+
 
 ### Create a new Gateway
-POST http://localhost:8080/api/gateways
+POST {{baseUrl}}/api/gateways
 Content-Type: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
 {
   "serial": "ALKG000000000606",
@@ -19,10 +21,11 @@ Authorization: Bearer {{access_token}}
   "version": "v4.0.0"
 }
 
+
 ### Update an existing Gateway
-PUT http://localhost:8080/api/gateways/ALKG000000000606
+PUT {{baseUrl}}/api/gateways/ALKG000000000606
 Content-Type: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
 {
   "serial": "ALKG000000000606",
@@ -31,6 +34,7 @@ Authorization: Bearer {{access_token}}
   "version": "v4.1.0"
 }
 
+
 ### Delete a Gateway
-DELETE http://localhost:8080/api/gateways/ALKG000000000606
-Authorization: Bearer {{access_token}}
+DELETE {{baseUrl}}/api/gateways/ALKG000000000606
+Authorization: Bearer {{accessToken}}

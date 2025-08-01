@@ -1,5 +1,5 @@
-### Register User
-POST http://localhost:8080/oauth/register
+### Register user
+POST {{baseUrl}}/oauth/register
 Content-Type: application/json
 Accept: application/json
 
@@ -8,8 +8,9 @@ Accept: application/json
   "password": "c@I2809P3]7"
 }
 
-### Login Writer User
-POST http://localhost:8080/oauth/login
+
+### Login writer User
+POST {{baseUrl}}/oauth/login
 Content-Type: application/json
 Accept: application/json
 
@@ -18,8 +19,9 @@ Accept: application/json
   "password": "c@I2809P3]7"
 }
 
-### Login Reader User
-POST http://localhost:8080/oauth/login
+
+### Login reader User
+POST {{baseUrl}}/oauth/login
 Content-Type: application/json
 Accept: application/json
 
@@ -28,16 +30,20 @@ Accept: application/json
   "password": "c@I2809P3]7"
 }
 
-### Get Authenticated data
-GET http://localhost:8080/oauth/me
-Authorization: Bearer {{access_token}}
 
-### Email confirm
-POST http://localhost:8080/oauth/confirm-email?email=lhpetrola@gmail.com&code=858322
+### Get authenticated data
+GET {{baseUrl}}/oauth/me
+Authorization: Bearer {{accessToken}}
 
-### Resend Email confim code
-POST http://localhost:8080/oauth/resend-email?email=lhpetrola@gmail.com
 
-### Change Role User
-GET http://localhost:8080/oauth/change-role?email=lhpetrola@gmail.com&role=READER
-Authorization: Bearer {{access_token}}
+### Email verify
+POST {{baseUrl}}/oauth/confirm-email?email=lhpetrola@gmail.com&code=482045
+
+
+### Resend email confim code
+POST {{baseUrl}}/oauth/resend-email?email=lhpetrola@gmail.com
+
+
+### Change role User
+GET {{baseUrl}}/oauth/change-role?email=lhpetrola@gmail.com&role=READER
+Authorization: Bearer {{accessToken}}
