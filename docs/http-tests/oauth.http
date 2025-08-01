@@ -1,5 +1,5 @@
 ### Register user
-POST {{baseUrl}}/oauth/register
+POST {{baseUrl}}/oauth/signup
 Content-Type: application/json
 Accept: application/json
 
@@ -36,14 +36,19 @@ GET {{baseUrl}}/oauth/me
 Authorization: Bearer {{accessToken}}
 
 
-### Email verify
-POST {{baseUrl}}/oauth/confirm-email?email=lhpetrola@gmail.com&code=482045
+### Email validation
+POST {{baseUrl}}/oauth/validate-email?email=lhpetrola@gmail.com&code=482045
 
 
-### Resend email confim code
-POST {{baseUrl}}/oauth/resend-email?email=lhpetrola@gmail.com
+### Resend email validation code
+POST {{baseUrl}}/oauth/resend-email-validation-code?email=bibica.bassambeth@hotmail.com
 
 
 ### Revoke User role
-GET {{baseUrl}}/oauth/revoke-user-role?email=lhpetrola@gmail.com&role=READER
+PUT {{baseUrl}}/oauth/revoke-user-role?email=lhpetrola@gmail.com&role=READER
+Authorization: Bearer {{accessToken}}
+
+
+### Grant User role
+PUT {{baseUrl}}/oauth/grant-user-role?email=lhpetrola@gmail.com&role=READER
 Authorization: Bearer {{accessToken}}

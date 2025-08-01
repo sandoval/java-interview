@@ -2,7 +2,11 @@ package com.vingcard.athos.interview.service.impl;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
+import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
+import com.vingcard.athos.interview.dto.response.JwtAuthenticatedUserInfo;
 import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
 import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
 import com.vingcard.athos.interview.persistence.entity.User;
@@ -10,6 +14,7 @@ import com.vingcard.athos.interview.persistence.repository.UserRepository;
 import com.vingcard.athos.interview.service.CognitoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,35 +41,35 @@ public class CognitoServiceImpl implements CognitoService {
 	/**
 	 * Create new user account from AWS Cognito and add in database
 	 *
-	 * @param email    User email
-	 * @param password User Password
+	 * @param userRegistrationRequestDto Registration user Object
 	 * @return Newly created User Object
 	 */
-	public User registerUser(String email, String password) {
-
-		SignUpRequest signUpRequest = new SignUpRequest()
-				.withClientId(clientId)
-				.withUsername(email)
-				.withPassword(password)
-				.withUserAttributes(new AttributeType().withName("email").withValue(email));
-
+	public User signupUser(UserRegistrationRequestDto userRegistrationRequestDto) {
 		try {
+			SignUpRequest signUpRequest = new SignUpRequest()
+					.withClientId(clientId)
+					.withUsername(userRegistrationRequestDto.email())
+					.withPassword(userRegistrationRequestDto.password())
+					.withUserAttributes(new AttributeType().withName("email")
+							.withValue(userRegistrationRequestDto.email()));
+
 			cognitoIdentityProvider.signUp(signUpRequest);
 
 			AdminAddUserToGroupRequest groupRequest = new AdminAddUserToGroupRequest()
 					.withUserPoolId(userPoolId)
-					.withUsername(email)
-					.withGroupName(RoleEnum.READER.name());
+					.withUsername(userRegistrationRequestDto.email())
+					.withGroupName(RoleEnum.READER.name()); // New users ever starts with READER Role
 			cognitoIdentityProvider.adminAddUserToGroup(groupRequest);
 
+			// Register user on database
 			User registeredUser = new User();
-			registeredUser.setEmail(email);
+			registeredUser.setEmail(userRegistrationRequestDto.email());
 			registeredUser.setRole(RoleEnum.READER);
-			registeredUser.setPassword(password);
+			registeredUser.setPassword(userRegistrationRequestDto.password());
 
 			return userRepository.save(registeredUser);
 		} catch (Exception e) {
-			throw new RuntimeException("User registration failed: " + e.getMessage(), e);
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
@@ -94,8 +99,24 @@ public class CognitoServiceImpl implements CognitoService {
 
 			return userRepository.save(user);
 		} catch (Exception e) {
-			throw new RuntimeException(String.format("user role concession failed with message: %s", e.getMessage()));
+			throw new RuntimeException(e.getMessage());
 		}
+	}
+
+	/**
+	 * Extracts User info from JWT Access Token
+	 *
+	 * @param jwt Jwt Object
+	 * @return Return user info object from JWT Key
+	 */
+	@Override
+	public JwtAuthenticatedUserInfo getAuthenticatedUserInfo(Jwt jwt) {
+		return new JwtAuthenticatedUserInfo(
+				jwt.getSubject(),
+				jwt.getIssuedAt(),
+				jwt.getExpiresAt(),
+				jwt.getClaimAsStringList("cognito:groups")
+		);
 	}
 
 
@@ -125,7 +146,7 @@ public class CognitoServiceImpl implements CognitoService {
 
 			return userRepository.save(user);
 		} catch (Exception e) {
-			throw new RuntimeException(String.format("user role revocation failed with message: %s", e.getMessage()));
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
@@ -138,6 +159,11 @@ public class CognitoServiceImpl implements CognitoService {
 	 * @return Access token and refresh token from AWS Cognito
 	 */
 	public LoginTokenResponseDto loginUser(String email, String password) {
+		User user = userRepository.findByEmail(email);
+
+		if (user == null) {
+			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+		}
 
 		InitiateAuthRequest authRequest = new InitiateAuthRequest()
 				.withAuthFlow("USER_PASSWORD_AUTH")
@@ -152,13 +178,17 @@ public class CognitoServiceImpl implements CognitoService {
 			String accessToken = authResponse.getAccessToken();
 			String refreshToken = authResponse.getRefreshToken();
 			Integer expiresIn = authResponse.getExpiresIn();
+			String tokenType = authResponse.getTokenType();
 
-			return new LoginTokenResponseDto(accessToken,
+			return new LoginTokenResponseDto(
+					tokenType,
+					accessToken,
 					refreshToken,
-					expiresIn);
+					expiresIn
+			);
 
 		} catch (Exception e) {
-			throw new RuntimeException("User login failed: " + e.getMessage(), e);
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
@@ -168,8 +198,9 @@ public class CognitoServiceImpl implements CognitoService {
 	 *
 	 * @param email            Email to confirm
 	 * @param confirmationCode Code received by email
+	 * @return Validation email response
 	 */
-	public void confirmEmail(String email, String confirmationCode) {
+	public ValidateEmailResponseDto validateEmail(String email, String confirmationCode) {
 		try {
 			ConfirmSignUpRequest confirmRequest = new ConfirmSignUpRequest()
 					.withClientId(clientId)
@@ -177,20 +208,31 @@ public class CognitoServiceImpl implements CognitoService {
 					.withConfirmationCode(confirmationCode);
 
 			User user = this.userRepository.findByEmail(email);
+
+			// User not found on Database
+			if (user == null) {
+				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+			}
+
 			user.setVerified(true);
 			user.setUpdateAt(LocalDateTime.now());
 
 			this.userRepository.save(user);
-
 			cognitoIdentityProvider.confirmSignUp(confirmRequest);
+
+			return new ValidateEmailResponseDto(true,
+					email,
+					"Email successfully validated.");
+
 		} catch (CodeMismatchException e) {
-			throw new RuntimeException("Invalid confirmation code.", e);
+			throw new RuntimeException(String.format("%s is not valid confirmation code.", confirmationCode));
 		} catch (ExpiredCodeException e) {
-			throw new RuntimeException("Confirmation code has expired.", e);
+			throw new RuntimeException("Confirmation code has expired.");
 		} catch (UserNotFoundException e) {
-			throw new NotFoundExceptionResponse("User not found.");
+			// User not found on AWS
+			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
 		} catch (Exception e) {
-			throw new RuntimeException("Error confirming email: " + e.getMessage(), e);
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
@@ -200,19 +242,24 @@ public class CognitoServiceImpl implements CognitoService {
 	 *
 	 * @param email Email to send confirmation code
 	 */
-	public void resendConfirmationCode(String email) {
+	public ResendEmailResponseDto resendEmailValidationCode(String email) {
 		try {
 			ResendConfirmationCodeRequest resendRequest = new ResendConfirmationCodeRequest()
 					.withClientId(clientId)
 					.withUsername(email);
 
 			cognitoIdentityProvider.resendConfirmationCode(resendRequest);
+
+			return new ResendEmailResponseDto(200,
+					true,
+					email,
+					"Verification email successfully resent.");
 		} catch (UserNotFoundException e) {
-			throw new RuntimeException("User not found.", e);
+			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
 		} catch (InvalidParameterException e) {
-			throw new RuntimeException("User is already confirmed or cannot resend code.", e);
+			throw new RuntimeException(e);
 		} catch (Exception e) {
-			throw new RuntimeException("Error resending confirmation code: " + e.getMessage(), e);
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 }
