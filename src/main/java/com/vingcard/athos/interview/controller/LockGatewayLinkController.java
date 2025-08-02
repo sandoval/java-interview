@@ -17,16 +17,42 @@ public class LockGatewayLinkController {
 
 	private final LockGatewayLinkServiceImpl lockGatewayLinkService;
 
+
+	/**
+	 * Get all links from database
+	 * Path: /api/lock-gateway-links
+	 * Method: Get
+	 *
+	 * @return Complete link list from Database
+	 */
 	@GetMapping
 	public List<LockGatewayLink> getAllLinks() {
 		return this.lockGatewayLinkService.getAllLinks();
 	}
 
+
+	/**
+	 * Filter links by Lock Serial ID
+	 * Path: /api/lock-gateway-links/{lockSerial}
+	 * Method: GET
+	 *
+	 * @param lockSerial Lock Serial ID
+	 * @return List of links by lock Serial ID Object
+	 */
 	@GetMapping("/lock/{lockSerial}")
 	public List<LockGatewayLink> getLinksByLockSerial(@PathVariable String lockSerial) {
 		return this.lockGatewayLinkService.getLinksByLockSerial(lockSerial);
 	}
 
+
+	/**
+	 * Filter links by Serial ID
+	 * Path: /api/lock-gateway-links/{gatewaySerial}
+	 * Method: GET
+	 *
+	 * @param gatewaySerial Gateway Serial ID
+	 * @return List of links by gateway Serial ID Object
+	 */
 	@GetMapping("/gateway/{gatewaySerial}")
 	public List<LockGatewayLink> getLinksByGatewaySerial(@PathVariable String gatewaySerial) {
 		return this.lockGatewayLinkService.getLinksByGatewaySerial(gatewaySerial);
@@ -88,7 +114,7 @@ public class LockGatewayLinkController {
 	 *
 	 * @param lockSerial    Lock Serial ID
 	 * @param gatewaySerial Gateway Serial ID
-	 * @return Return Status code 200 if success
+	 * @return Return Status code 202 if success
 	 */
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@DeleteMapping("/{lockSerial}/{gatewaySerial}")

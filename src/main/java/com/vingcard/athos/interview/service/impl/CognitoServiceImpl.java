@@ -38,6 +38,7 @@ public class CognitoServiceImpl implements CognitoService {
 		this.userRepository = userRepository;
 	}
 
+
 	/**
 	 * Create new user account from AWS Cognito and add in database
 	 *
@@ -73,6 +74,7 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 	}
 
+
 	/**
 	 * Add user to Role Group
 	 *
@@ -102,6 +104,7 @@ public class CognitoServiceImpl implements CognitoService {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+
 
 	/**
 	 * Extracts User info from JWT Access Token
