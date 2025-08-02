@@ -1,11 +1,14 @@
 package com.vingcard.athos.interview.persistence;
 
+import com.vingcard.athos.interview.model.enums.RoleEnum;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
+import com.vingcard.athos.interview.persistence.entity.auth.Role;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
+import com.vingcard.athos.interview.persistence.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ public class DummyDataLoader implements CommandLineRunner {
 	private final GatewayRepository gatewayRepository;
 	private final LockRepository lockRepository;
 	private final LockGatewayLinkRepository lockGatewayLinkRepository;
+	private final RoleRepository roleRepository;
 	private final Random random = new Random();
 
 
@@ -69,6 +73,15 @@ public class DummyDataLoader implements CommandLineRunner {
 				}
 
 				lockGatewayLinkRepository.save(lockGatewayLink);
+			}
+		}
+
+		// Add Default roles to database
+		if (roleRepository.count() <= 2) {
+			for (RoleEnum role : RoleEnum.values()) {
+				Role roles = new Role();
+				roles.setRole(role);
+				roleRepository.save(roles);
 			}
 		}
 	}

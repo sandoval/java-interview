@@ -1,4 +1,4 @@
-package com.vingcard.athos.interview.dto.response;
+package com.vingcard.athos.interview.model.dto.response;
 
 import java.time.Instant;
 import java.util.List;

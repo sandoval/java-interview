@@ -1,13 +1,14 @@
 package com.vingcard.athos.interview.controller;
 
-import com.vingcard.athos.interview.dto.request.UserLoginRequestDto;
-import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
-import com.vingcard.athos.interview.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
-import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
-import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.enums.RoleEnum;
-import com.vingcard.athos.interview.persistence.entity.User;
+import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
+import com.vingcard.athos.interview.model.dto.request.UserLoginRequestDto;
+import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
+import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
+import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
+import com.vingcard.athos.interview.persistence.entity.auth.Role;
+import com.vingcard.athos.interview.persistence.entity.auth.User;
 import com.vingcard.athos.interview.service.CognitoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/oauth")
+@RequestMapping("/api/oauth")
 @AllArgsConstructor
 public class OAuthController {
 
@@ -103,7 +106,7 @@ public class OAuthController {
 	 * @return Return updated user
 	 */
 	@PutMapping("/revoke-user-role")
-	public User revokeUserRole(@RequestParam String email, @RequestParam RoleEnum role) {
+	public User revokeUserRole(@RequestParam String email, @RequestBody RevokeGrantRolesRequestDto role) {
 		return this.cognitoService.revokeUserRole(email, role);
 	}
 
@@ -118,7 +121,7 @@ public class OAuthController {
 	 * @return Return updated user
 	 */
 	@PutMapping("/grant-user-role")
-	public User grantUserRole(@RequestParam String email, @RequestParam RoleEnum role) {
+	public User grantUserRole(@RequestParam String email, @RequestBody RevokeGrantRolesRequestDto role) {
 		return this.cognitoService.grantUserRole(email, role);
 	}
 }

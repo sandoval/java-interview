@@ -1,12 +1,12 @@
 package com.vingcard.athos.interview.service;
 
-import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
-import com.vingcard.athos.interview.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
-import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
-import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.enums.RoleEnum;
-import com.vingcard.athos.interview.persistence.entity.User;
+import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
+import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
+import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
+import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
+import com.vingcard.athos.interview.persistence.entity.auth.User;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 public interface CognitoService {
@@ -19,9 +19,9 @@ public interface CognitoService {
 
 	ResendEmailResponseDto resendEmailValidationCode(String email);
 
-	User revokeUserRole(String email, RoleEnum role);
+	User revokeUserRole(String email, RevokeGrantRolesRequestDto roles);
 
-	User grantUserRole(String email, RoleEnum role);
+	User grantUserRole(String email, RevokeGrantRolesRequestDto roles);
 
 	JwtAuthenticatedUserInfo getAuthenticatedUserInfo(Jwt jwt);
 

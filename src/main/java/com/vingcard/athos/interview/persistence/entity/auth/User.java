@@ -1,12 +1,12 @@
-package com.vingcard.athos.interview.persistence.entity;
+package com.vingcard.athos.interview.persistence.entity.auth;
 
-import com.vingcard.athos.interview.enums.RoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(
@@ -32,11 +32,15 @@ public class User {
 	private String email;
 
 	@Column
+	@NotEmpty(message = "Phone Number is Required")
+	private String phoneNumber;
+
+	@Column
 	@NotEmpty(message = "Password is required")
 	private String password;
 
 	@Column
-	private Boolean enabled = true;
+	private Boolean enabled = false;
 
 	@Column
 	private Boolean verified = false;
@@ -50,8 +54,13 @@ public class User {
 	private LocalDateTime updateAt = LocalDateTime.now();
 
 	@Column
-	@Enumerated(EnumType.STRING)
-	private RoleEnum role;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private List<Role> roles;
 
 	@Transient
 	private String accessToken;

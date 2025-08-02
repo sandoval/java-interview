@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.exception;
 
-import com.vingcard.athos.interview.dto.response.ExceptionResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ExceptionResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

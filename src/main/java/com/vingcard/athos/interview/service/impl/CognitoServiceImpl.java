@@ -2,14 +2,17 @@ package com.vingcard.athos.interview.service.impl;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
-import com.vingcard.athos.interview.dto.request.UserRegistrationRequestDto;
-import com.vingcard.athos.interview.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.dto.response.LoginTokenResponseDto;
-import com.vingcard.athos.interview.dto.response.ResendEmailResponseDto;
-import com.vingcard.athos.interview.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.enums.RoleEnum;
 import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
-import com.vingcard.athos.interview.persistence.entity.User;
+import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
+import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
+import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
+import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
+import com.vingcard.athos.interview.model.enums.RoleEnum;
+import com.vingcard.athos.interview.persistence.entity.auth.Role;
+import com.vingcard.athos.interview.persistence.entity.auth.User;
+import com.vingcard.athos.interview.persistence.repository.RoleRepository;
 import com.vingcard.athos.interview.persistence.repository.UserRepository;
 import com.vingcard.athos.interview.service.CognitoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,11 +35,15 @@ public class CognitoServiceImpl implements CognitoService {
 
 	private final AWSCognitoIdentityProvider cognitoIdentityProvider;
 	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
 
 	@Autowired
-	public CognitoServiceImpl(AWSCognitoIdentityProvider cognitoIdentityProvider, UserRepository userRepository) {
+	public CognitoServiceImpl(AWSCognitoIdentityProvider cognitoIdentityProvider,
+	                          UserRepository userRepository,
+	                          RoleRepository roleRepository) {
 		this.cognitoIdentityProvider = cognitoIdentityProvider;
 		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
 	}
 
 
@@ -51,21 +59,28 @@ public class CognitoServiceImpl implements CognitoService {
 					.withClientId(clientId)
 					.withUsername(userRegistrationRequestDto.email())
 					.withPassword(userRegistrationRequestDto.password())
+					.withUserAttributes(new AttributeType().withName("phone_number")
+							.withValue(userRegistrationRequestDto.phoneNumber()))
 					.withUserAttributes(new AttributeType().withName("email")
 							.withValue(userRegistrationRequestDto.email()));
 
 			cognitoIdentityProvider.signUp(signUpRequest);
 
+			// Add Role READER to new user
 			AdminAddUserToGroupRequest groupRequest = new AdminAddUserToGroupRequest()
 					.withUserPoolId(userPoolId)
 					.withUsername(userRegistrationRequestDto.email())
 					.withGroupName(RoleEnum.READER.name()); // New users ever starts with READER Role
 			cognitoIdentityProvider.adminAddUserToGroup(groupRequest);
 
+			// Get READER Roles from database
+			List<Role> readerRoles = roleRepository.findByRole(RoleEnum.READER);
+
 			// Register user on database
 			User registeredUser = new User();
 			registeredUser.setEmail(userRegistrationRequestDto.email());
-			registeredUser.setRole(RoleEnum.READER);
+			registeredUser.setRoles(readerRoles);
+			registeredUser.setPhoneNumber(userRegistrationRequestDto.phoneNumber());
 			registeredUser.setPassword(userRegistrationRequestDto.password());
 
 			return userRepository.save(registeredUser);
@@ -79,26 +94,26 @@ public class CognitoServiceImpl implements CognitoService {
 	 * Add user to Role Group
 	 *
 	 * @param email User email
-	 * @param role  New user Role
+	 * @param roles New user Role list
 	 * @return Updated user Object
 	 */
-	public User grantUserRole(String email, RoleEnum role) {
+	public User grantUserRole(String email, RevokeGrantRolesRequestDto roles) {
 		try {
-			cognitoIdentityProvider.adminAddUserToGroup(new AdminAddUserToGroupRequest()
-					.withUserPoolId(userPoolId)
-					.withUsername(email)
-					.withGroupName(role.name()));
+			User user = userRepository.findByEmailAndVerified(email, true)
+					.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
 
-			User user = userRepository.findByEmailAndVerified(email, true);
+			for (Role role : roles.roles()) {
+				cognitoIdentityProvider.adminAddUserToGroup(new AdminAddUserToGroupRequest()
+						.withUserPoolId(userPoolId)
+						.withUsername(user.getEmail())
+						.withGroupName(role.getRole().name()));
 
-			if (user == null) {
-				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+				Role newRole = roleRepository.findByRole(role.getRole()).getFirst();
+				user.getRoles().add(newRole);
 			}
 
 			// If Exists update database
 			user.setUpdateAt(LocalDateTime.now());
-			user.setRole(role);
-
 			return userRepository.save(user);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
@@ -127,26 +142,27 @@ public class CognitoServiceImpl implements CognitoService {
 	 * Remove user to Role Group
 	 *
 	 * @param email User email
-	 * @param role  New user Role
+	 * @param roles New user Role list
 	 * @return Updated user Object
 	 */
-	public User revokeUserRole(String email, RoleEnum role) {
+	public User revokeUserRole(String email, RevokeGrantRolesRequestDto roles) {
 		try {
-			cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
-					.withUserPoolId(userPoolId)
-					.withUsername(email)
-					.withGroupName(role.name()));
+			User user = userRepository.findByEmailAndVerified(email, true)
+					.orElseThrow(() ->
+							new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
 
-			User user = userRepository.findByEmailAndVerified(email, true);
+			for (Role role : roles.roles()) {
+				Role revokedRole = roleRepository.findByRole(role.getRole()).getFirst();
+				user.getRoles().remove(revokedRole);
 
-			if (user == null) {
-				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+				cognitoIdentityProvider.adminRemoveUserFromGroup(new AdminRemoveUserFromGroupRequest()
+						.withUserPoolId(userPoolId)
+						.withUsername(email)
+						.withGroupName(role.getRole().name()));
 			}
 
-			// If Exists update database
-			user.setRole(role);
+			// Set update at
 			user.setUpdateAt(LocalDateTime.now());
-
 			return userRepository.save(user);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
@@ -162,11 +178,11 @@ public class CognitoServiceImpl implements CognitoService {
 	 * @return Access token and refresh token from AWS Cognito
 	 */
 	public LoginTokenResponseDto loginUser(String email, String password) {
-		User user = userRepository.findByEmail(email);
 
-		if (user == null) {
-			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
-		}
+		// Check user exists
+		userRepository.findByEmail(email)
+				.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+
 
 		InitiateAuthRequest authRequest = new InitiateAuthRequest()
 				.withAuthFlow("USER_PASSWORD_AUTH")
@@ -210,12 +226,10 @@ public class CognitoServiceImpl implements CognitoService {
 					.withUsername(email)
 					.withConfirmationCode(confirmationCode);
 
-			User user = this.userRepository.findByEmail(email);
+			// Get existing user
+			User user = this.userRepository.findByEmail(email)
+					.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
 
-			// User not found on Database
-			if (user == null) {
-				throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
-			}
 
 			user.setVerified(true);
 			user.setUpdateAt(LocalDateTime.now());

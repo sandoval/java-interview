@@ -1,4 +1,4 @@
-package com.vingcard.athos.interview.dto.request;
+package com.vingcard.athos.interview.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

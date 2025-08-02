@@ -26,22 +26,45 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests(requests -> requests
 						// Permit all in /auth/**
-						.requestMatchers("/oauth/confirm-email").permitAll()
-						.requestMatchers("/oauth/resend-email").permitAll()
-						.requestMatchers("/oauth/login").permitAll()
-						.requestMatchers("/oauth/register").permitAll()
+						.requestMatchers(
+								"/api/oauth/confirm-email",
+								"/api/oauth/resend-email",
+								"/api/oauth/login",
+								"/api/oauth/signup"
+						).permitAll()
+						.requestMatchers("/api/oauth/me").authenticated()
 
-						// OAuth block admin controls
-						.requestMatchers("/oauth/me").authenticated()
-						.requestMatchers("/oauth/change-role").hasRole("WRITER")
+						// OAuth writer controls
+						.requestMatchers(
+								"/api/oauth/revoke-user-role",
+								"/api/oauth/grant-user-role"
+						).hasRole("WRITER")
 
 						// Permit GETs in /api/** for ROLE_WRITER or ROLE_READER
-						.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("WRITER", "READER")
+						.requestMatchers(HttpMethod.GET,
+								"/api/locks/**",
+								"/api/gateways/**",
+								"/api/lock-gateway-links/**",
+								"/api/users/by-email/",
+								"/api/users"
+						).hasAnyRole("WRITER", "READER")
 
 						// Permit POST, PUT e DELETE only for ROLE_WRITER
-						.requestMatchers(HttpMethod.POST, "/api/**").hasRole("WRITER")
-						.requestMatchers(HttpMethod.PUT, "/api/**").hasRole("WRITER")
-						.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("WRITER")
+						.requestMatchers(HttpMethod.POST,
+								"/api/locks/**",
+								"/api/gateways/**",
+								"/api/lock-gateway-links/**"
+						).hasRole("WRITER")
+						.requestMatchers(HttpMethod.PUT,
+								"/api/locks/**",
+								"/api/gateways/**",
+								"/api/lock-gateway-links/**"
+						).hasRole("WRITER")
+						.requestMatchers(HttpMethod.DELETE,
+								"/api/locks/**",
+								"/api/gateways/**",
+								"/api/lock-gateway-links/**"
+						).hasRole("WRITER")
 						.anyRequest().authenticated()
 				)
 

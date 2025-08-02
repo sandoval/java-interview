@@ -27,7 +27,7 @@ Deve haver um ponto central de autenticação para todos os usuários e aplicati
   verificação do e-mail.
 * [x] As contas de usuário devem ter o perfil de acesso de leitura atribuído automaticamente no momento da criação da
   conta.
-* [ ] A solução de autenticação deve suportar centenas de milhares de usuários.
+* [x] A solução de autenticação deve suportar centenas de milhares de usuários.
 * [ ] A interface de usuário de autenticação deve ser localizável e disponível pelo menos em inglês, português e
   espanhol.
 * [ ] A solução de autenticação deve suportar números de telefone para identificação do usuário no futuro.

@@ -1,16 +1,17 @@
 ### Register user
-POST {{baseUrl}}/oauth/signup
+POST {{baseUrl}}/api/oauth/signup
 Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "bibica.bassambeth@hotmail.com",
+  "email": "lhpetrola@gmail.com",
+  "phoneNumber": "+5561999387022",
   "password": "c@I2809P3]7"
 }
 
 
 ### Login writer User
-POST {{baseUrl}}/oauth/login
+POST {{baseUrl}}/api/oauth/login
 Content-Type: application/json
 Accept: application/json
 
@@ -21,7 +22,7 @@ Accept: application/json
 
 
 ### Login reader User
-POST {{baseUrl}}/oauth/login
+POST {{baseUrl}}/api/oauth/login
 Content-Type: application/json
 Accept: application/json
 
@@ -32,23 +33,44 @@ Accept: application/json
 
 
 ### Get authenticated data
-GET {{baseUrl}}/oauth/me
+GET {{baseUrl}}/api/oauth/me
 Authorization: Bearer {{accessToken}}
 
 
 ### Email validation
-POST {{baseUrl}}/oauth/validate-email?email=lhpetrola@gmail.com&code=482045
+POST {{baseUrl}}/api/oauth/validate-email?email=lhpetrola@gmail.com&code=733393
 
 
 ### Resend email validation code
-POST {{baseUrl}}/oauth/resend-email-validation-code?email=bibica.bassambeth@hotmail.com
+POST {{baseUrl}}/api/oauth/resend-email-validation-code?email=lhpetrola@gmail.com
 
 
 ### Revoke User role
-PUT {{baseUrl}}/oauth/revoke-user-role?email=lhpetrola@gmail.com&role=READER
+PUT {{baseUrl}}/api/oauth/revoke-user-role?email=lhpetrola@gmail.com
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{accessToken}}
+
+{
+  "roles": [
+    {
+      "role": "WRITER"
+    }
+  ]
+}
+
 
 
 ### Grant User role
-PUT {{baseUrl}}/oauth/grant-user-role?email=lhpetrola@gmail.com&role=READER
+PUT {{baseUrl}}/api/oauth/grant-user-role?email=lhpetrola@gmail.com&role=WRITER
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{accessToken}}
+
+{
+  "roles": [
+    {
+      "role": "WRITER"
+    }
+  ]
+}
