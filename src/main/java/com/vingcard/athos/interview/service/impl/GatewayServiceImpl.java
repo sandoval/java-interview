@@ -1,12 +1,14 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.service.GatewayService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,10 +38,9 @@ public class GatewayServiceImpl implements GatewayService {
 	 * @return Created gateway object
 	 */
 	@Override
-	public ResponseEntity<Gateway> getGatewayBySerial(String serial) {
-		Optional<Gateway> gateway = gatewayRepository.findById(serial);
-		return gateway.map(ResponseEntity::ok)
-				.orElseThrow(() -> new NotFoundExceptionResponse("Lock not found with serial: " + serial));
+	public Gateway getGatewayBySerial(String serial) {
+		return gatewayRepository.findById(serial)
+				.orElseThrow(() -> new ResourceNotFoundException("Gateway not found: " + serial));
 	}
 
 
@@ -50,10 +51,7 @@ public class GatewayServiceImpl implements GatewayService {
 	 * @return Gateway object newly created
 	 */
 	@Override
-	public Gateway createGateway(Gateway gateway) {
-		if (gateway.getSerial() == null || gateway.getSerial().trim().isEmpty()) {
-			throw new IllegalArgumentException("Serial cannot be empty");
-		}
+	public Gateway createGateway(@Valid Gateway gateway) {
 
 		// Set default values for new gateways
 		if (gateway.getVersion() == null) {
@@ -73,22 +71,24 @@ public class GatewayServiceImpl implements GatewayService {
 	 * @return Updated gateway object
 	 */
 	@Override
-	public ResponseEntity<Gateway> updateGateway(String serial, Gateway gatewayDetails) {
-		Optional<Gateway> optionalGateway = gatewayRepository.findById(serial);
-		if (optionalGateway.isPresent()) {
-			Gateway gateway = optionalGateway.get();
-			gateway.setMacAddress(gatewayDetails.getMacAddress());
-			gateway.setVersion(gatewayDetails.getVersion());
+	public Gateway updateGateway(String serial, Gateway gatewayDetails) {
+		Optional<Gateway> optionalGateway = this.gatewayRepository.findById(serial);
 
-			// Only update online status if explicitly provided
-			if (gatewayDetails.isOnline() != gateway.isOnline()) {
-				gateway.setOnline(gatewayDetails.isOnline());
-			}
-
-			return ResponseEntity.ok(gatewayRepository.save(gateway));
-		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
+		if (optionalGateway.isEmpty()) {
+			throw new ResourceNotFoundException("Gateway not found");
 		}
+
+		optionalGateway.get().setSerial(gatewayDetails.getSerial());
+		optionalGateway.get().setMacAddress(gatewayDetails.getMacAddress());
+		optionalGateway.get().setVersion(gatewayDetails.getVersion());
+		optionalGateway.get().setVersion(gatewayDetails.getVersion());
+
+		// Only update online status if explicitly provided
+		if (optionalGateway.get().isOnline() != gatewayDetails.isOnline()) {
+			optionalGateway.get().setOnline(gatewayDetails.isOnline());
+		}
+
+		return gatewayRepository.save(optionalGateway.get());
 	}
 
 
@@ -99,12 +99,22 @@ public class GatewayServiceImpl implements GatewayService {
 	 * @return Is deleted response status
 	 */
 	@Override
-	public ResponseEntity<?> deleteGateway(String serial) {
-		if (gatewayRepository.existsById(serial)) {
-			gatewayRepository.deleteById(serial);
-			return ResponseEntity.ok().build();
-		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
-		}
+	public void deleteGateway(String serial) {
+		Gateway lock = gatewayRepository.findById(serial)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gateway not found."));
+
+		gatewayRepository.delete(lock);
+	}
+
+
+	/**
+	 * Check if Gateway existis by Serial ID
+	 *
+	 * @param serial Serial ID
+	 * @return boolean
+	 */
+	@Override
+	public boolean existsById(String serial) {
+		return gatewayRepository.existsById(serial);
 	}
 }

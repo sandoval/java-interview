@@ -1,7 +1,7 @@
 package com.vingcard.athos.interview.controller;
 
 import com.vingcard.athos.interview.persistence.entity.auth.User;
-import com.vingcard.athos.interview.service.impl.UserServiceImpl;
+import com.vingcard.athos.interview.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
 
-	private UserServiceImpl userService;
+	private UserService userService;
 
 
 	/**

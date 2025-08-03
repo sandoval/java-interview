@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -18,6 +20,8 @@ public class Lock {
 
 	@Id
 	@Column(length = 16, nullable = false, unique = true)
+	@NotBlank(message = "Serial cannot be Blank")
+	@NotNull(message = "Serial cannot be Null")
 	private String serial;
 
 	@Column(length = 50, nullable = false)

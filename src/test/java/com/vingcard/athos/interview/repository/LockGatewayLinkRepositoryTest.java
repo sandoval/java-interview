@@ -3,7 +3,7 @@ package com.vingcard.athos.interview.repository;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
+import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
@@ -53,7 +53,7 @@ class LockGatewayLinkRepositoryTest {
     void testSaveAndFindLink() {
         linkRepository.save(testLink);
 
-        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001"));
+        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
         assertTrue(found.isPresent());
         assertEquals(-55.5, found.get().getRssi());
         assertEquals("LOCK000000000001", found.get().getLockSerial());
@@ -142,7 +142,7 @@ class LockGatewayLinkRepositoryTest {
         LockGatewayLink updatedLink = new LockGatewayLink("LOCK000000000001", "GATEWAY00000001", -45.0);
         linkRepository.save(updatedLink);
 
-        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001"));
+        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
         assertTrue(found.isPresent());
         assertEquals(-45.0, found.get().getRssi());
     }
@@ -152,13 +152,13 @@ class LockGatewayLinkRepositoryTest {
         linkRepository.save(testLink);
 
         // Verify link exists
-        assertTrue(linkRepository.existsById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001")));
+        assertTrue(linkRepository.existsById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001")));
 
         // Delete link
-        linkRepository.deleteById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001"));
+        linkRepository.deleteById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
 
         // Verify link is deleted
-        assertFalse(linkRepository.existsById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001")));
+        assertFalse(linkRepository.existsById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001")));
     }
 
     @Test
@@ -188,7 +188,7 @@ class LockGatewayLinkRepositoryTest {
             LockGatewayLink link = new LockGatewayLink("LOCK000000000001", "GATEWAY00000001", rssiValues[i]);
             linkRepository.save(link);
             
-            Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkId("LOCK000000000001", "GATEWAY00000001"));
+            Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
             assertTrue(found.isPresent());
             assertEquals(rssiValues[i], found.get().getRssi(), 0.001);
             

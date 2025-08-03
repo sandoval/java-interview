@@ -1,21 +1,26 @@
 package com.vingcard.athos.interview.controller;
 
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
+import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.service.impl.LockGatewayLinkServiceImpl;
+import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
+import com.vingcard.athos.interview.service.LockGatewayLinkService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.hibernate.query.NativeQuery;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lock-gateway-links")
 @AllArgsConstructor
 public class LockGatewayLinkController {
 
-	private final LockGatewayLinkServiceImpl lockGatewayLinkService;
+	private final LockGatewayLinkService lockGatewayLinkService;
+	private final LockGatewayLinkRepository lockGatewayLinkRepository;
 
 
 	/**
@@ -71,7 +76,16 @@ public class LockGatewayLinkController {
 	@GetMapping("/{lockSerial}/{gatewaySerial}")
 	public ResponseEntity<LockGatewayLink> getLink(@PathVariable String lockSerial,
 	                                               @PathVariable String gatewaySerial) {
-		return this.lockGatewayLinkService.getLink(lockSerial, gatewaySerial);
+		LockGatewayLinkIdDto id = new LockGatewayLinkIdDto(lockSerial, gatewaySerial);
+		Optional<LockGatewayLink> link = lockGatewayLinkService.findById(id);
+
+		if (link.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return link.map(ResponseEntity::ok)
+				.orElseThrow(() -> new ResourceNotFoundException("Lock not found with serial: " + id));
+
 	}
 
 
@@ -103,7 +117,9 @@ public class LockGatewayLinkController {
 	public ResponseEntity<LockGatewayLink> updateLink(@PathVariable String lockSerial,
 	                                                  @PathVariable String gatewaySerial,
 	                                                  @Valid @RequestBody LockGatewayLink linkDetails) {
-		return this.lockGatewayLinkService.updateLink(lockSerial, gatewaySerial, linkDetails);
+		LockGatewayLink updatedLink =
+				this.lockGatewayLinkService.updateLink(new LockGatewayLinkIdDto(lockSerial, gatewaySerial), linkDetails);
+		return ResponseEntity.ok(updatedLink);
 	}
 
 
@@ -116,10 +132,17 @@ public class LockGatewayLinkController {
 	 * @param gatewaySerial Gateway Serial ID
 	 * @return Return Status code 202 if success
 	 */
-	@ResponseStatus(HttpStatus.ACCEPTED)
 	@DeleteMapping("/{lockSerial}/{gatewaySerial}")
 	public ResponseEntity<?> deleteLink(@PathVariable String lockSerial,
 	                                    @PathVariable String gatewaySerial) {
-		return this.lockGatewayLinkService.deleteLink(lockSerial, gatewaySerial);
+
+		LockGatewayLinkIdDto id = new LockGatewayLinkIdDto(lockSerial, gatewaySerial);
+
+		if (!lockGatewayLinkService.existsById(id)) {
+			return ResponseEntity.notFound().build();
+		}
+
+		lockGatewayLinkService.deleteLink(id);
+		return ResponseEntity.ok().build();
 	}
 } 

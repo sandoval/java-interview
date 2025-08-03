@@ -3,7 +3,7 @@ package com.vingcard.athos.interview;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
+import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
@@ -33,7 +33,7 @@ public class LockGatewayLinkRepositoryTest {
         LockGatewayLink link = new LockGatewayLink("LOCKSERIAL000003", "GATEWAYSERIAL0001", -55.5);
         linkRepository.save(link);
 
-        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkId("LOCKSERIAL000003", "GATEWAYSERIAL0001"));
+        Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCKSERIAL000003", "GATEWAYSERIAL0001"));
         Assertions.assertTrue(found.isPresent());
         Assertions.assertEquals(-55.5, found.get().getRssi());
         Assertions.assertEquals("LOCKSERIAL000003", found.get().getLockSerial());

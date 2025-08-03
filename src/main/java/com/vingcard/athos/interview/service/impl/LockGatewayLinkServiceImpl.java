@@ -1,13 +1,15 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
+import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.persistence.entity.LockGatewayLinkId;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.service.LockGatewayLinkService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		List<LockGatewayLink> link = linkRepository.findByLockSerial(lockSerial);
 
 		if (link.isEmpty()) {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + lockSerial);
+			throw new ResourceNotFoundException("Lock not found with serial: " + lockSerial);
 		}
 
 		return link;
@@ -59,7 +61,7 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		List<LockGatewayLink> link = linkRepository.findByGatewaySerial(gatewaySerial);
 
 		if (link.isEmpty()) {
-			throw new NotFoundExceptionResponse("Gateway not found with serial: " + gatewaySerial);
+			throw new ResourceNotFoundException("Gateway not found with serial: " + gatewaySerial);
 		}
 
 		return link;
@@ -75,9 +77,14 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 	 */
 	@Override
 	public ResponseEntity<LockGatewayLink> getLink(String lockSerial, String gatewaySerial) {
-		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
+		LockGatewayLinkIdDto id = new LockGatewayLinkIdDto(lockSerial, gatewaySerial);
 		Optional<LockGatewayLink> link = linkRepository.findById(id);
-		return link.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundExceptionResponse("Lock not found with serial: " + id));
+
+		if (link.isEmpty()) {
+			throw new ResourceNotFoundException("Gateway not found with serial: " + gatewaySerial);
+		}
+
+		return ResponseEntity.ok(link.get());
 	}
 
 
@@ -104,41 +111,67 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 	/**
 	 * Update existing gateway and lock link from database
 	 *
-	 * @param lockSerial    Lock Serial ID
-	 * @param gatewaySerial Gateway Serial ID
-	 * @param linkDetails   Lock gateway Object
+	 * @param id          Lock Gateway link ID with Lock Serial ID and Gateway Serial ID
+	 * @param linkDetails Lock gateway Object
 	 * @return Status code and Lock gateway link object
 	 */
 	@Override
-	public ResponseEntity<LockGatewayLink> updateLink(String lockSerial,
-	                                                  String gatewaySerial,
-	                                                  LockGatewayLink linkDetails) {
-		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
-		Optional<LockGatewayLink> optionalLink = linkRepository.findById(id);
+	public LockGatewayLink updateLink(LockGatewayLinkIdDto id,
+	                                  LockGatewayLink linkDetails) {
+		Optional<LockGatewayLink> optionalLock = this.linkRepository.findById(id);
 
-		if (optionalLink.isPresent()) {
-			LockGatewayLink link = optionalLink.get();
-			link.setRssi(linkDetails.getRssi());
-			return ResponseEntity.ok(linkRepository.save(link));
-		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + id);
+		if (optionalLock.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Link not found");
 		}
+
+		optionalLock.get().setLockSerial(linkDetails.getLockSerial());
+		optionalLock.get().setGatewaySerial(linkDetails.getGatewaySerial());
+		optionalLock.get().setRssi(linkDetails.getRssi());
+
+		return linkRepository.save(optionalLock.get());
 	}
 
 
 	/**
-	 * @param lockSerial    Lock Serial ID
-	 * @param gatewaySerial Gateway Serial ID
-	 * @return Status code from link deletion
+	 * Delete link from The Database
+	 *
+	 * @param id Lock Gateway link ID with Lock Serial ID and Gateway Serial ID
+	 * @return Status code ok if success
 	 */
 	@Override
-	public ResponseEntity<?> deleteLink(String lockSerial, String gatewaySerial) {
-		LockGatewayLinkId id = new LockGatewayLinkId(lockSerial, gatewaySerial);
+	public void deleteLink(LockGatewayLinkIdDto id) {
+
+		LockGatewayLink lock = linkRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Link not found: " + id));
+
+		linkRepository.delete(lock);
+	}
+
+
+	/**
+	 * Returns true if Link exists
+	 *
+	 * @param id Lock Gateway link ID with Lock Serial ID and Gateway Serial ID
+	 * @return boolean
+	 */
+	@Override
+	public boolean existsById(LockGatewayLinkIdDto id) {
+		return linkRepository.existsById(id);
+	}
+
+
+	/**
+	 * Find Link by Lock Serial ID and Gateway Serial ID
+	 *
+	 * @param id Lock Gateway link ID with Lock Serial ID and Gateway Serial ID
+	 * @return Link Object
+	 */
+	@Override
+	public Optional<LockGatewayLink> findById(LockGatewayLinkIdDto id) {
 		if (linkRepository.existsById(id)) {
-			linkRepository.deleteById(id);
-			return ResponseEntity.ok().build();
+			return linkRepository.findById(id);
 		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + id);
+			throw new ResourceNotFoundException("Link not found with serial: " + id);
 		}
 	}
 }

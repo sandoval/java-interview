@@ -3,7 +3,7 @@ package com.vingcard.athos.interview.service;
 import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
 import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.model.dto.response.UserLoginResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
 import com.vingcard.athos.interview.persistence.entity.auth.User;
@@ -13,7 +13,7 @@ public interface CognitoService {
 
 	User signupUser(UserRegistrationRequestDto userRegistrationRequestDto);
 
-	LoginTokenResponseDto loginUser(String email, String password);
+	UserLoginResponseDto loginUser(String email, String password);
 
 	ValidateEmailResponseDto validateEmail(String email, String confirmationCode);
 

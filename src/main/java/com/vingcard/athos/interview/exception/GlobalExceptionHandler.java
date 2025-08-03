@@ -6,15 +6,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(IllegalArgumentException.class)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<ExceptionResponseDto> handleBadRequestExceptionException(IllegalArgumentException e,
 	                                                                               HttpServletRequest request,
 	                                                                               HttpServletResponse response) {
@@ -27,38 +30,6 @@ public class GlobalExceptionHandler {
 				e.getMessage(),
 				Instant.now().toString(),
 				HttpStatus.BAD_REQUEST.value()
-		));
-	}
-
-	@ExceptionHandler(NotFoundExceptionResponse.class)
-	public ResponseEntity<ExceptionResponseDto> handleNotFoundException(NotFoundExceptionResponse e,
-	                                                                    HttpServletRequest request,
-	                                                                    HttpServletResponse response) {
-		response.setStatus(HttpStatus.NOT_FOUND.value());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponseDto(
-				request.getRequestURI(),
-				"Resource Not Found",
-				e.getMessage(),
-				Instant.now().toString(),
-				HttpStatus.NOT_FOUND.value()
-		));
-	}
-
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ExceptionResponseDto> handleGenericException(Exception e,
-	                                                                   HttpServletRequest request,
-	                                                                   HttpServletResponse response) {
-		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionResponseDto(
-				request.getRequestURI(),
-				"Internal Server Error",
-				e.getMessage(),
-				Instant.now().toString(),
-				HttpStatus.INTERNAL_SERVER_ERROR.value()
 		));
 	}
 } 

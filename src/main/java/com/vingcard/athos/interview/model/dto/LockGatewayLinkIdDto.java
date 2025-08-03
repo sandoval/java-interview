@@ -1,4 +1,4 @@
-package com.vingcard.athos.interview.persistence.entity;
+package com.vingcard.athos.interview.model.dto;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class LockGatewayLinkId implements Serializable {
+public class LockGatewayLinkIdDto implements Serializable {
 
 	private String lockSerial;
 	private String gatewaySerial;

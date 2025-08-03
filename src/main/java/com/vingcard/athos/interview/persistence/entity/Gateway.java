@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -18,6 +19,7 @@ public class Gateway {
 
 	@Id
 	@Column(length = 16, nullable = false, unique = true)
+	@NotBlank(message = "Serial cannot be empty")
 	private String serial;
 
 	@Column(nullable = false)

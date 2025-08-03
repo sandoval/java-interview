@@ -1,7 +1,8 @@
 package com.vingcard.athos.interview.controller;
 
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.persistence.entity.Gateway;
-import com.vingcard.athos.interview.service.impl.GatewayServiceImpl;
+import com.vingcard.athos.interview.service.GatewayService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GatewayController {
 
-	private final GatewayServiceImpl gatewayService;
+	private final GatewayService gatewayService;
 
 
 	/**
@@ -40,7 +41,11 @@ public class GatewayController {
 	 */
 	@GetMapping("/{serial}")
 	public ResponseEntity<Gateway> getGatewayBySerial(@PathVariable String serial) {
-		return this.gatewayService.getGatewayBySerial(serial);
+		Gateway lock = gatewayService.getGatewayBySerial(serial);
+		if (lock == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(lock);
 	}
 
 
@@ -70,7 +75,13 @@ public class GatewayController {
 	@PutMapping("/{serial}")
 	public ResponseEntity<Gateway> updateGateway(@PathVariable String serial,
 	                                             @Valid @RequestBody Gateway gatewayDetails) {
-		return this.gatewayService.updateGateway(serial, gatewayDetails);
+		Gateway existing = gatewayService.getGatewayBySerial(serial);
+		if (existing == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Gateway updated = gatewayService.updateGateway(serial, gatewayDetails);
+		return ResponseEntity.ok(updated);
 	}
 
 
@@ -84,6 +95,11 @@ public class GatewayController {
 	 */
 	@DeleteMapping("/{serial}")
 	public ResponseEntity<?> deleteGateway(@PathVariable String serial) {
-		return this.gatewayService.deleteGateway(serial);
+		if (!gatewayService.existsById(serial)) {
+			throw new ResourceNotFoundException("Gateway not found");
+		}
+
+		gatewayService.deleteGateway(serial);
+		return ResponseEntity.ok().build();
 	}
 } 

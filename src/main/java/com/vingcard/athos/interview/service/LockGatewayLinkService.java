@@ -1,9 +1,11 @@
 package com.vingcard.athos.interview.service;
 
+import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LockGatewayLinkService {
 
@@ -17,10 +19,12 @@ public interface LockGatewayLinkService {
 
 	LockGatewayLink createLink(LockGatewayLink link);
 
-	ResponseEntity<LockGatewayLink> updateLink(String lockSerial,
-	                                           String gatewaySerial,
-	                                           LockGatewayLink linkDetails);
+	LockGatewayLink updateLink(LockGatewayLinkIdDto id, LockGatewayLink linkDetails);
 
-	ResponseEntity<?> deleteLink(String lockSerial, String gatewaySerial);
+	void deleteLink(LockGatewayLinkIdDto id);
+
+	boolean existsById(LockGatewayLinkIdDto id);
+
+	Optional<LockGatewayLink> findById(LockGatewayLinkIdDto id);
 
 }

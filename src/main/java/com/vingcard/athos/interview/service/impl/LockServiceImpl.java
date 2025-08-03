@@ -1,15 +1,15 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
 import com.vingcard.athos.interview.service.LockService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -36,14 +36,9 @@ public class LockServiceImpl implements LockService {
 	 * @return Response status and Lock Object
 	 */
 	@Override
-	public ResponseEntity<Lock> getLockBySerial(String serial) {
-		Optional<Lock> lock = lockRepository.findById(serial);
-
-		if (lock.isEmpty()) {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
-		}
-
-		return lock.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	public Lock getLockBySerial(String serial) {
+		return lockRepository.findById(serial)
+				.orElseThrow(() -> new ResourceNotFoundException("Lock not found: " + serial));
 	}
 
 
@@ -77,24 +72,20 @@ public class LockServiceImpl implements LockService {
 	 * @return Update status response
 	 */
 	@Override
-	public ResponseEntity<Lock> updateLock(String serial, Lock lockDetails) {
-		Optional<Lock> optionalLock = this.lockRepository.findById(serial);
+	public Lock updateLock(String serial, Lock lockDetails) {
+		Lock optionalLock = this.lockRepository.findById(serial)
+				.orElseThrow(() -> new ResourceNotFoundException("Lock not found: " + serial));
 
-		if (optionalLock.isPresent()) {
-			Lock lock = optionalLock.get();
-			lock.setName(lockDetails.getName());
-			lock.setMacAddress(lockDetails.getMacAddress());
-			lock.setVersion(lockDetails.getVersion());
+		optionalLock.setName(lockDetails.getName());
+		optionalLock.setMacAddress(lockDetails.getMacAddress());
+		optionalLock.setVersion(lockDetails.getVersion());
 
-			// Only update online status if explicitly provided
-			if (lockDetails.isOnline() != lock.isOnline()) {
-				lock.setOnline(lockDetails.isOnline());
-			}
-
-			return ResponseEntity.ok(lockRepository.save(lock));
-		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
+		// Only update online status if explicitly provided
+		if (lockDetails.isOnline() != optionalLock.isOnline()) {
+			optionalLock.setOnline(lockDetails.isOnline());
 		}
+
+		return lockRepository.save(optionalLock);
 	}
 
 
@@ -105,12 +96,22 @@ public class LockServiceImpl implements LockService {
 	 * @return Deletion status response
 	 */
 	@Override
-	public ResponseEntity<?> deleteLock(String serial) {
-		if (lockRepository.existsById(serial)) {
-			lockRepository.deleteById(serial);
-			return ResponseEntity.ok().build();
-		} else {
-			throw new NotFoundExceptionResponse("Lock not found with serial: " + serial);
-		}
+	public void deleteLock(String serial) {
+		Lock lock = lockRepository.findById(serial)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lock not found: " + serial));
+
+		lockRepository.delete(lock);
+	}
+
+
+	/**
+	 * Check if Lock existis by Serial ID
+	 *
+	 * @param serial Lock Serial ID
+	 * @return boolean
+	 */
+	@Override
+	public boolean existsById(String serial) {
+		return lockRepository.existsById(serial);
 	}
 }

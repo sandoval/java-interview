@@ -2,11 +2,11 @@ package com.vingcard.athos.interview.service.impl;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
-import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
 import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
+import com.vingcard.athos.interview.model.dto.response.UserLoginResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
 import com.vingcard.athos.interview.model.enums.RoleEnum;
@@ -100,7 +100,7 @@ public class CognitoServiceImpl implements CognitoService {
 	public User grantUserRole(String email, RevokeGrantRolesRequestDto roles) {
 		try {
 			User user = userRepository.findByEmailAndVerified(email, true)
-					.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+					.orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
 
 			for (Role role : roles.roles()) {
 				cognitoIdentityProvider.adminAddUserToGroup(new AdminAddUserToGroupRequest()
@@ -149,7 +149,7 @@ public class CognitoServiceImpl implements CognitoService {
 		try {
 			User user = userRepository.findByEmailAndVerified(email, true)
 					.orElseThrow(() ->
-							new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+							new ResourceNotFoundException(String.format("User with email %s not found", email)));
 
 			for (Role role : roles.roles()) {
 				Role revokedRole = roleRepository.findByRole(role.getRole()).getFirst();
@@ -177,11 +177,11 @@ public class CognitoServiceImpl implements CognitoService {
 	 * @param password User password
 	 * @return Access token and refresh token from AWS Cognito
 	 */
-	public LoginTokenResponseDto loginUser(String email, String password) {
+	public UserLoginResponseDto loginUser(String email, String password) {
 
 		// Check user exists
 		userRepository.findByEmail(email)
-				.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+				.orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
 
 
 		InitiateAuthRequest authRequest = new InitiateAuthRequest()
@@ -199,7 +199,7 @@ public class CognitoServiceImpl implements CognitoService {
 			Integer expiresIn = authResponse.getExpiresIn();
 			String tokenType = authResponse.getTokenType();
 
-			return new LoginTokenResponseDto(
+			return new UserLoginResponseDto(
 					tokenType,
 					accessToken,
 					refreshToken,
@@ -228,7 +228,7 @@ public class CognitoServiceImpl implements CognitoService {
 
 			// Get existing user
 			User user = this.userRepository.findByEmail(email)
-					.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+					.orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
 
 
 			user.setVerified(true);
@@ -247,7 +247,7 @@ public class CognitoServiceImpl implements CognitoService {
 			throw new RuntimeException("Confirmation code has expired.");
 		} catch (UserNotFoundException e) {
 			// User not found on AWS
-			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+			throw new ResourceNotFoundException(String.format("User with email %s not found", email));
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -272,7 +272,7 @@ public class CognitoServiceImpl implements CognitoService {
 					email,
 					"Verification email successfully resent.");
 		} catch (UserNotFoundException e) {
-			throw new NotFoundExceptionResponse(String.format("User with email %s not found", email));
+			throw new ResourceNotFoundException(String.format("User with email %s not found", email));
 		} catch (InvalidParameterException e) {
 			throw new RuntimeException(e);
 		} catch (Exception e) {

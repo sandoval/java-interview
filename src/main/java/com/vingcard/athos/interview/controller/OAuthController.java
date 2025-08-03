@@ -4,10 +4,9 @@ import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto
 import com.vingcard.athos.interview.model.dto.request.UserLoginRequestDto;
 import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
 import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.model.dto.response.LoginTokenResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
+import com.vingcard.athos.interview.model.dto.response.UserLoginResponseDto;
 import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.persistence.entity.auth.Role;
 import com.vingcard.athos.interview.persistence.entity.auth.User;
 import com.vingcard.athos.interview.service.CognitoService;
 import jakarta.validation.Valid;
@@ -15,8 +14,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/oauth")
@@ -47,7 +44,7 @@ public class OAuthController {
 	 * @return Return Object with credential Tokens
 	 */
 	@PostMapping("/login")
-	public LoginTokenResponseDto loginUser(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto) {
+	public UserLoginResponseDto loginUser(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto) {
 		return this.cognitoService.loginUser(userLoginRequestDto.email(), userLoginRequestDto.password());
 	}
 

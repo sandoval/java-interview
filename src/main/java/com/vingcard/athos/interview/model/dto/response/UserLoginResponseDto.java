@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.model.dto.response;
 
-public record LoginTokenResponseDto(
+public record UserLoginResponseDto(
 		String tokenType,
 		String accessToken,
 		String refreshToken,

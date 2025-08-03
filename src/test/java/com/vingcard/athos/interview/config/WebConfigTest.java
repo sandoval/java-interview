@@ -25,7 +25,7 @@ class WebConfigTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         // Test CORS preflight request
-        mockMvc.perform(options("/docs/http-tests/gateways")
+        mockMvc.perform(options("/api/gateways")
                 .header("Origin", "http://localhost:3000")
                 .header("Access-Control-Request-Method", "GET")
                 .header("Access-Control-Request-Headers", "Content-Type"))
@@ -41,7 +41,7 @@ class WebConfigTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         // Test CORS headers on actual GET request
-        mockMvc.perform(get("/docs/http-tests/gateways")
+        mockMvc.perform(get("/api/gateways")
                 .header("Origin", "http://localhost:3000"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"));
@@ -52,7 +52,7 @@ class WebConfigTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         // Test that CORS is not allowed for different origin
-        mockMvc.perform(get("/docs/http-tests/gateways")
+        mockMvc.perform(get("/api/gateways")
                 .header("Origin", "http://malicious-site.com"))
                 .andExpect(status().isForbidden());
     }
@@ -63,9 +63,9 @@ class WebConfigTest {
 
         // Test CORS for different API endpoints
         String[] apiEndpoints = {
-                "/docs/http-tests/gateways",
-                "/docs/http-tests/locks",
-                "/docs/http-tests/lock-gateway-links"
+                "/api/gateways",
+                "/api/locks",
+                "/api/lock-gateway-links"
         };
 
         for (String endpoint : apiEndpoints) {
@@ -94,7 +94,7 @@ class WebConfigTest {
         String[] allowedMethods = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
 
         for (String method : allowedMethods) {
-            mockMvc.perform(options("/docs/http-tests/gateways")
+            mockMvc.perform(options("/api/gateways")
                     .header("Origin", "http://localhost:3000")
                     .header("Access-Control-Request-Method", method))
                     .andExpect(status().isOk())
@@ -107,7 +107,7 @@ class WebConfigTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         // Test that credentials are allowed
-        mockMvc.perform(options("/docs/http-tests/gateways")
+        mockMvc.perform(options("/api/gateways")
                 .header("Origin", "http://localhost:3000")
                 .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isOk())

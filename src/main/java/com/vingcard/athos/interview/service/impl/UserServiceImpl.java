@@ -1,6 +1,6 @@
 package com.vingcard.athos.interview.service.impl;
 
-import com.vingcard.athos.interview.exception.NotFoundExceptionResponse;
+import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.persistence.entity.auth.User;
 import com.vingcard.athos.interview.persistence.repository.UserRepository;
 import com.vingcard.athos.interview.service.UserService;
@@ -36,6 +36,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByEmail(String email) {
 		return this.userRepository.findByEmail(email)
-				.orElseThrow(() -> new NotFoundExceptionResponse(String.format("User with email %s not found", email)));
+				.orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
 	}
 }
