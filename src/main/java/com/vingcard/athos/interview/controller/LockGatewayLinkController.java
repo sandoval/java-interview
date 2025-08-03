@@ -3,11 +3,9 @@ package com.vingcard.athos.interview.controller;
 import com.vingcard.athos.interview.exception.ResourceNotFoundException;
 import com.vingcard.athos.interview.model.dto.LockGatewayLinkIdDto;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
-import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.service.LockGatewayLinkService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.hibernate.query.NativeQuery;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +18,6 @@ import java.util.Optional;
 public class LockGatewayLinkController {
 
 	private final LockGatewayLinkService lockGatewayLinkService;
-	private final LockGatewayLinkRepository lockGatewayLinkRepository;
 
 
 	/**

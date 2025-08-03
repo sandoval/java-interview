@@ -93,7 +93,6 @@ public class LockServiceImpl implements LockService {
 	 * Delete lock from Database filtered by serial
 	 *
 	 * @param serial Lock Serial ID
-	 * @return Deletion status response
 	 */
 	@Override
 	public void deleteLock(String serial) {

@@ -7,7 +7,6 @@ import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkReposi
 import com.vingcard.athos.interview.service.LockGatewayLinkService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -65,26 +64,6 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 		}
 
 		return link;
-	}
-
-
-	/**
-	 * Return lock and gateway link by Lock Serial ID and Gateway Serial ID
-	 *
-	 * @param lockSerial    Lock Serial ID
-	 * @param gatewaySerial Gateway Serial ID
-	 * @return Status code and Lock and gateway link filtered by Lock serial ID and Gateway serial ID
-	 */
-	@Override
-	public ResponseEntity<LockGatewayLink> getLink(String lockSerial, String gatewaySerial) {
-		LockGatewayLinkIdDto id = new LockGatewayLinkIdDto(lockSerial, gatewaySerial);
-		Optional<LockGatewayLink> link = linkRepository.findById(id);
-
-		if (link.isEmpty()) {
-			throw new ResourceNotFoundException("Gateway not found with serial: " + gatewaySerial);
-		}
-
-		return ResponseEntity.ok(link.get());
 	}
 
 

@@ -96,7 +96,6 @@ public class GatewayServiceImpl implements GatewayService {
 	 * Delete Gateway from Database
 	 *
 	 * @param serial Gateway Serial ID
-	 * @return Is deleted response status
 	 */
 	@Override
 	public void deleteGateway(String serial) {

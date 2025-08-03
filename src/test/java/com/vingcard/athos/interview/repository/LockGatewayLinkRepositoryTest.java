@@ -28,9 +28,7 @@ class LockGatewayLinkRepositoryTest {
     @Autowired
     private LockGatewayLinkRepository linkRepository;
 
-    private Lock testLock;
-    private Gateway testGateway;
-    private LockGatewayLink testLink;
+	private LockGatewayLink testLink;
 
     @BeforeEach
     void setUp() {
@@ -40,8 +38,8 @@ class LockGatewayLinkRepositoryTest {
         gatewayRepository.deleteAll();
 
         // Create test data
-        testLock = new Lock("LOCK000000000001", "Test Lock", "11:22:33:44:55:66", true, "v1.0.0");
-        testGateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
+	    Lock testLock = new Lock("LOCK000000000001", "Test Lock", "11:22:33:44:55:66", true, "v1.0.0");
+	    Gateway testGateway = new Gateway("GATEWAY00000001", "AA:BB:CC:DD:EE:FF", true, "v1.0.0");
         
         lockRepository.save(testLock);
         gatewayRepository.save(testGateway);
@@ -183,18 +181,18 @@ class LockGatewayLinkRepositoryTest {
     void testComplexRssiValues() {
         // Test various RSSI values including edge cases
         double[] rssiValues = {-100.0, -50.5, 0.0, 50.5, 100.0};
-        
-        for (int i = 0; i < rssiValues.length; i++) {
-            LockGatewayLink link = new LockGatewayLink("LOCK000000000001", "GATEWAY00000001", rssiValues[i]);
-            linkRepository.save(link);
-            
-            Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
-            assertTrue(found.isPresent());
-            assertEquals(rssiValues[i], found.get().getRssi(), 0.001);
-            
-            // Clean up for next iteration
-            linkRepository.delete(link);
-        }
+
+	    for (double rssiValue : rssiValues) {
+		    LockGatewayLink link = new LockGatewayLink("LOCK000000000001", "GATEWAY00000001", rssiValue);
+		    linkRepository.save(link);
+
+		    Optional<LockGatewayLink> found = linkRepository.findById(new LockGatewayLinkIdDto("LOCK000000000001", "GATEWAY00000001"));
+		    assertTrue(found.isPresent());
+		    assertEquals(rssiValue, found.get().getRssi(), 0.001);
+
+		    // Clean up for next iteration
+		    linkRepository.delete(link);
+	    }
     }
 
     @Test

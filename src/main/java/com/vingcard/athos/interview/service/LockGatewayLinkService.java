@@ -15,8 +15,6 @@ public interface LockGatewayLinkService {
 
 	List<LockGatewayLink> getLinksByGatewaySerial(String gatewaySerial);
 
-	ResponseEntity<LockGatewayLink> getLink(String lockSerial, String gatewaySerial);
-
 	LockGatewayLink createLink(LockGatewayLink link);
 
 	LockGatewayLink updateLink(LockGatewayLinkIdDto id, LockGatewayLink linkDetails);
