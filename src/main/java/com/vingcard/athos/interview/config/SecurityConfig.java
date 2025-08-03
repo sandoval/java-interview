@@ -27,11 +27,12 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(requests -> requests
 						// Permit all in /auth/**
 						.requestMatchers(
-								"/api/oauth/confirm-email",
-								"/api/oauth/resend-email",
+								"/api/oauth/signup",
 								"/api/oauth/login",
-								"/api/oauth/signup"
+								"/api/oauth/validate-email",
+								"/api/oauth/resend-email-validation-code"
 						).permitAll()
+
 						.requestMatchers("/api/oauth/me").authenticated()
 
 						// OAuth writer controls

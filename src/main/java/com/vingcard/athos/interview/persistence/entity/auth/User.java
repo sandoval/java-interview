@@ -60,9 +60,7 @@ public class User {
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
-	private List<Role> roles;
 
-	@Transient
-	private String accessToken;
+	private List<Role> roles;
 
 }

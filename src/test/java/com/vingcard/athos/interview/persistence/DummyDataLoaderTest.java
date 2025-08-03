@@ -29,8 +29,10 @@ class DummyDataLoaderTest {
 
 	@Autowired
 	private LockRepository lockRepository;
+
 	@Autowired
 	private LockGatewayLinkRepository lockGatewayLinkRepository;
+
 	@Autowired
 	private RoleRepository roleRepository;
 

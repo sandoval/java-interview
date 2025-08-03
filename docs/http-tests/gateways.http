@@ -5,7 +5,7 @@ Authorization: Bearer {{accessToken}}
 
 
 ### Get Gateway by Serial
-GET {{baseUrl}}/api/gateways/ALKG000000000606
+GET {{baseUrl}}/api/gateways/ALKG000000000001
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 

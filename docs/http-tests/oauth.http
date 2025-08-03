@@ -4,7 +4,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "reader.tester@gmail.com",
+  "email": "lhpetrola@gmail.com",
   "phoneNumber": "+5561999387022",
   "password": "c@I2809P3]7"
 }
@@ -16,7 +16,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "bibica.bassambeth@hotmail.com",
+  "email": "writer.user.challenge@gmail.com",
   "password": "c@I2809P3]7"
 }
 
@@ -27,7 +27,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "lhpetrola@gmail.com",
+  "email": "reader.challenge@gmail.com",
   "password": "c@I2809P3]7"
 }
 
@@ -38,7 +38,7 @@ Authorization: Bearer {{accessToken}}
 
 
 ### Email validation
-POST {{baseUrl}}/api/oauth/validate-email?email=lhpetrola@gmail.com&code=733393
+POST {{baseUrl}}/api/oauth/validate-email?email=lhpetrola@gmail.com&code=484275
 
 
 ### Resend email validation code

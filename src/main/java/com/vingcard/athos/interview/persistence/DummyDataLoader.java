@@ -5,10 +5,8 @@ import com.vingcard.athos.interview.persistence.entity.Gateway;
 import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.entity.LockGatewayLink;
 import com.vingcard.athos.interview.persistence.entity.auth.Role;
-import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
-import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
-import com.vingcard.athos.interview.persistence.repository.LockRepository;
-import com.vingcard.athos.interview.persistence.repository.RoleRepository;
+import com.vingcard.athos.interview.persistence.repository.*;
+import com.vingcard.athos.interview.service.CognitoService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -27,6 +25,8 @@ public class DummyDataLoader implements CommandLineRunner {
 	private final LockGatewayLinkRepository lockGatewayLinkRepository;
 	private final RoleRepository roleRepository;
 	private final Random random = new Random();
+	private final UserRepository userRepository;
+	private final CognitoService cognitoService;
 
 
 	/**
@@ -83,6 +83,11 @@ public class DummyDataLoader implements CommandLineRunner {
 				roles.setRole(role);
 				roleRepository.save(roles);
 			}
+		}
+
+		// Register Reader and Writer User
+		if (userRepository.count() < 2) {
+			cognitoService.preRegisterReaderAndWriterUsers();
 		}
 	}
 
