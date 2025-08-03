@@ -115,7 +115,6 @@ public class LockGatewayLinkServiceImpl implements LockGatewayLinkService {
 	 * Delete link from The Database
 	 *
 	 * @param id Lock Gateway link ID with Lock Serial ID and Gateway Serial ID
-	 * @return Status code ok if success
 	 */
 	@Override
 	public void deleteLink(LockGatewayLinkIdDto id) {
