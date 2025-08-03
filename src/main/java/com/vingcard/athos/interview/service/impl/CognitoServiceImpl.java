@@ -164,7 +164,7 @@ public class CognitoServiceImpl implements CognitoService {
 	@Override
 	public void preRegisterReaderAndWriterUsers() {
 
-		if (!userExists(readerUserEmail) && !userExists(writerUserEmail)) {
+		if (userNotExists(readerUserEmail) && userNotExists(writerUserEmail)) {
 			// Reader user DTO
 			UserRegistrationRequestDto readerUser = new UserRegistrationRequestDto(
 					readerUserEmail,
@@ -197,15 +197,15 @@ public class CognitoServiceImpl implements CognitoService {
 	 * @param email User email
 	 * @return boolean
 	 */
-	private boolean userExists(String email) {
+	private boolean userNotExists(String email) {
 		AdminGetUserRequest getUserRequest = new AdminGetUserRequest()
 				.withUserPoolId(userPoolId)
 				.withUsername(email);
 		try {
 			cognitoIdentityProvider.adminGetUser(getUserRequest);
-			return true;
-		} catch (UserNotFoundException e) {
 			return false;
+		} catch (UserNotFoundException e) {
+			return true;
 		}
 	}
 
