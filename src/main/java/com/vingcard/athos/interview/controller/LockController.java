@@ -1,75 +1,97 @@
 package com.vingcard.athos.interview.controller;
 
 import com.vingcard.athos.interview.persistence.entity.Lock;
-import com.vingcard.athos.interview.persistence.repository.LockRepository;
+import com.vingcard.athos.interview.service.LockService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/locks")
+@AllArgsConstructor
 public class LockController {
 
-    private final LockRepository lockRepository;
+	private final LockService lockService;
 
-    @Autowired
-    public LockController(LockRepository lockRepository) {
-        this.lockRepository = lockRepository;
-    }
 
-    @GetMapping
-    public List<Lock> getAllLocks() {
-        return lockRepository.findAll();
-    }
+	/**
+	 * Get All locks from database
+	 * Path: /api/locks/
+	 * Method: GET
+	 *
+	 * @return List of all Locks from database
+	 */
+	@GetMapping
+	public List<Lock> getAllLocks() {
+		return lockService.getAllLocks();
+	}
 
-    @GetMapping("/{serial}")
-    public ResponseEntity<Lock> getLockBySerial(@PathVariable String serial) {
-        Optional<Lock> lock = lockRepository.findById(serial);
-        return lock.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
 
-    @PostMapping
-    public Lock createLock(@Valid @RequestBody Lock lock) {
-        if (lock.getSerial() == null || lock.getSerial().trim().isEmpty()) {
-            throw new IllegalArgumentException("Serial cannot be empty");
-        }
-        // Set default values for new locks
-        if (lock.getVersion() == null) {
-            lock.setVersion("");
-        }
-        lock.setOnline(false); // New locks start offline
-        return lockRepository.save(lock);
-    }
+	/**
+	 * Returns Lock from database filtered by Lock Serial ID
+	 * Path: /api/locks/{serial}
+	 * Method: GET
+	 *
+	 * @param serial Lock Serial ID
+	 * @return Existing lock Object
+	 */
+	@GetMapping("/{serial}")
+	public ResponseEntity<Lock> getLockBySerial(@PathVariable String serial) {
+		Lock lock = lockService.getLockBySerial(serial);
+		if (lock == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(lock);
+	}
 
-    @PutMapping("/{serial}")
-    public ResponseEntity<Lock> updateLock(@PathVariable String serial, @Valid @RequestBody Lock lockDetails) {
-        Optional<Lock> optionalLock = lockRepository.findById(serial);
-        if (optionalLock.isPresent()) {
-            Lock lock = optionalLock.get();
-            lock.setName(lockDetails.getName());
-            lock.setMacAddress(lockDetails.getMacAddress());
-            lock.setVersion(lockDetails.getVersion());
-            // Only update online status if explicitly provided
-            if (lockDetails.isOnline() != lock.isOnline()) {
-                lock.setOnline(lockDetails.isOnline());
-            }
-            return ResponseEntity.ok(lockRepository.save(lock));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @DeleteMapping("/{serial}")
-    public ResponseEntity<?> deleteLock(@PathVariable String serial) {
-        if (lockRepository.existsById(serial)) {
-            lockRepository.deleteById(serial);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	/**
+	 * Add a new lock to Database
+	 * Path: /api/locks
+	 * Method: POST
+	 *
+	 * @param lock Lock Object
+	 * @return Lock newly created
+	 */
+	@PostMapping
+	public Lock createLock(@Valid @RequestBody Lock lock) {
+		return lockService.createLock(lock);
+	}
+
+
+	/**
+	 * Update lock filtered by Lock Serial ID from database
+	 * Path: /api/locks/{serial}
+	 * Method: PUT
+	 *
+	 * @param serial      Lock Serial ID
+	 * @param lockDetails Lock Object
+	 * @return Lock newly updated
+	 */
+	@PutMapping("/{serial}")
+	public Lock updateLock(@PathVariable String serial, @Valid @RequestBody Lock lockDetails) {
+		return lockService.updateLock(serial, lockDetails);
+	}
+
+
+	/**
+	 * Delete lock filtered by Lock Serial ID from database
+	 * Path: /api/locks/{serial}
+	 * Method: DELETE
+	 *
+	 * @param serial Lock Serial ID
+	 * @return Return Status code 202 if success
+	 */
+	@DeleteMapping("/{serial}")
+	public ResponseEntity<?> deleteLock(@PathVariable String serial) {
+		if (!lockService.existsById(serial)) {
+			return ResponseEntity.notFound().build();
+		}
+
+		lockService.deleteLock(serial);
+		return ResponseEntity.ok().build();
+	}
 } 

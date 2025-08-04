@@ -1,0 +1,16 @@
+### Login reader User
+GET {{baseUrl}}/api/oauth/authorize
+
+### Get authenticated data
+GET {{baseUrl}}/api/oauth/me
+Authorization: Bearer {{accessToken}}
+
+### Revoke Token
+POST http://localhost:8080/api/oauth/revoke-token
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}

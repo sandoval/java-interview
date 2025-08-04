@@ -11,6 +11,18 @@ locks and gateways in an IoT system.
 
 ## How to Run the Application
 
+### 0. Configure enviromnent 
+
+Use the environment variables in java.env.example in the IntelliJ SpringBoot service to perform the build. It can be found in the forwarded email.
+
+You also need to export the values from ``docker.env.example`` in the Docker service. This will generate the database environment with the correct configuration. 
+
+If you want to generate a new secure password for Postgres, use the command:
+
+```shell
+ openssl rand -base64 32
+```
+
 ### 1. Start the Spring MVC Application
 This will start the web application and connect to the database (via Docker Compose):
 

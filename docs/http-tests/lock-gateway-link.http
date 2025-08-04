@@ -1,0 +1,51 @@
+### Get all Lock-Gateway Links
+GET {{baseUrl}}/api/lock-gateway-links
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### Get Links by Lock Serial
+GET {{baseUrl}}/api/lock-gateway-links/lock/ALKS000000000002
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### Get Links by Gateway Serial
+GET {{baseUrl}}/api/lock-gateway-links/gateway/ALKG000000000002
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### Get a specific Link
+GET {{baseUrl}}/api/lock-gateway-links/ALKS000000000002/ALKG000000000002
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### Create a new Lock-Gateway Link
+POST {{baseUrl}}/api/lock-gateway-links
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "lockSerial": "ALKS000000000001",
+  "gatewaySerial": "ALKG000000000001",
+  "rssi": -55.0
+}
+
+
+### Update a Lock-Gateway Link
+PUT {{baseUrl}}/api/lock-gateway-links/ALKS000000000001/ALKG000000000001
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "lockSerial": "ALKS000000000001",
+  "gatewaySerial": "ALKG000000000001",
+  "rssi": -42.3
+}
+
+
+### Delete a Lock-Gateway Link
+DELETE {{baseUrl}}/api/lock-gateway-links/ALKS000000000001/ALKG000000000001
+Authorization: Bearer {{accessToken}}

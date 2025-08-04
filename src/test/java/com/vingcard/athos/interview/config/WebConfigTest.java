@@ -63,9 +63,9 @@ class WebConfigTest {
 
         // Test CORS for different API endpoints
         String[] apiEndpoints = {
-            "/api/gateways",
-            "/api/locks", 
-            "/api/lock-gateway-links"
+                "/api/gateways",
+                "/api/locks",
+                "/api/lock-gateway-links"
         };
 
         for (String endpoint : apiEndpoints) {
