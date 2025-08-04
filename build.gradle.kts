@@ -26,6 +26,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.amazonaws:aws-java-sdk-cognitoidp:1.12.788")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
 
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     runtimeOnly("org.postgresql:postgresql")

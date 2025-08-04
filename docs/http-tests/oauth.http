@@ -1,76 +1,16 @@
-### Register user
-POST {{baseUrl}}/api/oauth/signup
-Content-Type: application/json
-Accept: application/json
-
-{
-  "email": "lhpetrola@gmail.com",
-  "phoneNumber": "+5561999387022",
-  "password": "c@I2809P3]7"
-}
-
-
-### Login writer User
-POST {{baseUrl}}/api/oauth/login
-Content-Type: application/json
-Accept: application/json
-
-{
-  "email": "writer.user.challenge@gmail.com",
-  "password": "c@I2809P3]7"
-}
-
-
 ### Login reader User
-POST {{baseUrl}}/api/oauth/login
-Content-Type: application/json
-Accept: application/json
-
-{
-  "email": "reader.challenge@gmail.com",
-  "password": "c@I2809P3]7"
-}
-
+GET {{baseUrl}}/api/oauth/authorize
 
 ### Get authenticated data
 GET {{baseUrl}}/api/oauth/me
 Authorization: Bearer {{accessToken}}
 
-
-### Email validation
-POST {{baseUrl}}/api/oauth/validate-email?email=lhpetrola@gmail.com&code=484275
-
-
-### Resend email validation code
-POST {{baseUrl}}/api/oauth/resend-email-validation-code?email=lhpetrola@gmail.com
-
-
-### Revoke User role
-PUT {{baseUrl}}/api/oauth/revoke-user-role?email=lhpetrola@gmail.com
+### Revoke Token
+POST http://localhost:8080/api/oauth/revoke-token
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer {{accessToken}}
 
 {
-  "roles": [
-    {
-      "role": "WRITER"
-    }
-  ]
-}
-
-
-
-### Grant User role
-PUT {{baseUrl}}/api/oauth/grant-user-role?email=lhpetrola@gmail.com&role=WRITER
-Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "roles": [
-    {
-      "role": "WRITER"
-    }
-  ]
+  "refreshToken": "{{refreshToken}}"
 }

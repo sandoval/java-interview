@@ -23,25 +23,23 @@ spring:
           cognito:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
-            scope: openid
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/api/oauth/callback
+            scope:
+              - email
+              - openid
+              - phone
         provider:
           cognito:
-            issuer-uri: ${aws.cognito.uri}
+            authorization-uri: https://us-east-19brfo1qri.auth.us-east-1.amazoncognito.com/oauth2/authorize
+            token-uri: https://us-east-19brfo1qri.auth.us-east-1.amazoncognito.com/oauth2/token
+            user-info-uri: https://us-east-19brfo1qri.auth.us-east-1.amazoncognito.com/oauth2/userInfo
+            jwk-set-uri: ${aws.cognito.uri}/.well-known/jwks.json
 
 aws:
   accessKeyId: ${ACCESS_KEY_ID}
   secretKey: ${SECRET_KEY}
   region: us-east-1
   cognito:
-    uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_WH9sgrlAo
-    user-pool-id: us-east-1_WH9sgrlAo
-
-  default-users:
-    reader:
-      email: ${READER_USER_EMAIL}
-      password: ${READER_USER_PASSWORD}
-      phone: ${READER_USER_PHONE}
-    writer:
-      email: ${WRITER_USER_EMAIL}
-      password: ${WRITER_USER_PASSWORD}
-      phone: ${WRITER_USER_PHONE}
+    uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_9BrFO1qrI
+    revoke-token-uri: https://us-east-19brfo1qri.auth.us-east-1.amazoncognito.com/oauth2/revoke

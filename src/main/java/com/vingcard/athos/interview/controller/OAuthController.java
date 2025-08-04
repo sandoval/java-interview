@@ -1,53 +1,29 @@
 package com.vingcard.athos.interview.controller;
 
-import com.vingcard.athos.interview.model.dto.request.RevokeGrantRolesRequestDto;
-import com.vingcard.athos.interview.model.dto.request.UserLoginRequestDto;
-import com.vingcard.athos.interview.model.dto.request.UserRegistrationRequestDto;
+import com.vingcard.athos.interview.model.AuthTokens;
 import com.vingcard.athos.interview.model.dto.response.JwtAuthenticatedUserInfo;
-import com.vingcard.athos.interview.model.dto.response.ResendEmailResponseDto;
-import com.vingcard.athos.interview.model.dto.response.UserLoginResponseDto;
-import com.vingcard.athos.interview.model.dto.response.ValidateEmailResponseDto;
-import com.vingcard.athos.interview.persistence.entity.auth.User;
-import com.vingcard.athos.interview.service.CognitoService;
-import jakarta.validation.Valid;
+import com.vingcard.athos.interview.service.OAuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/oauth")
 @AllArgsConstructor
 public class OAuthController {
 
-	private final CognitoService cognitoService;
-
-
-	/**
-	 * SignUp new User
-	 * Method: POST
-	 *
-	 * @param userRegistrationRequestDto user registration body
-	 * @return Newly user registered object
-	 */
-	@PostMapping(value = "/signup", consumes = {"application/json"})
-	public User signupUser(@Valid @RequestBody UserRegistrationRequestDto userRegistrationRequestDto) {
-		return this.cognitoService.signupUser(userRegistrationRequestDto);
-	}
-
-
-	/**
-	 * Authenticate user
-	 * Method: POST
-	 *
-	 * @param userLoginRequestDto Login authentication Object
-	 * @return Return Object with credential Tokens
-	 */
-	@PostMapping("/login")
-	public UserLoginResponseDto loginUser(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto) {
-		return this.cognitoService.loginUser(userLoginRequestDto.email(), userLoginRequestDto.password());
-	}
-
+	private final OAuthService oAuthService;
+	private final InMemoryClientRegistrationRepository clientRegistrationRepository;
 
 	/**
 	 * Extracts User info from JWT Access Token
@@ -59,66 +35,65 @@ public class OAuthController {
 	 */
 	@GetMapping("/me")
 	public JwtAuthenticatedUserInfo getAuthenticatedUserInfo(@AuthenticationPrincipal Jwt jwt) {
-		return this.cognitoService.getAuthenticatedUserInfo(jwt);
+		return this.oAuthService.getAuthenticatedUserInfo(jwt);
 	}
 
 
 	/**
-	 * Validate new User email
-	 * Path: /api/oauth/validate-email
-	 * Method: POST
+	 * Autorize user to acess endpoints
 	 *
-	 * @param email Email user
-	 * @param code  Code received in email inbox
-	 * @return Email validation response Object
+	 * @param response
+	 * @throws IOException
 	 */
-	@PostMapping("/validate-email")
-	public ValidateEmailResponseDto validateEmail(@RequestParam String email,
-	                                              @RequestParam String code) {
-		return this.cognitoService.validateEmail(email, code);
+	@GetMapping("/authorize")
+	public void authorize(HttpServletResponse response) throws IOException {
+		ClientRegistration registration = clientRegistrationRepository.findByRegistrationId("cognito");
+
+		String redirectUri = UriComponentsBuilder
+				.fromUriString(registration.getProviderDetails().getAuthorizationUri())
+				.queryParam("response_type", "code")
+				.queryParam("client_id", registration.getClientId())
+				.queryParam("redirect_uri", registration.getRedirectUri())
+				.queryParam("scope", String.join("+", registration.getScopes()))
+				.build()
+				.toUriString();
+
+		response.sendRedirect(redirectUri);
+	}
+
+	/**
+	 * Callback AWS Cognito Claims
+	 *
+	 * @param code Code received by AWS
+	 * @return Status code for authentication
+	 */
+	@GetMapping("/callback")
+	public ResponseEntity<?> callback(@RequestParam String code) {
+		AuthTokens tokens = oAuthService.exchangeCodeForTokens(code);
+		System.out.println("tokens: " + tokens);
+		return ResponseEntity.ok(tokens);
 	}
 
 
 	/**
-	 * Resend Email validation code
-	 * Path: /api/oauth/resend-email-validation-code
-	 * Method: POST
-	 *
-	 * @param email User email
-	 * @return Return status resend email code object
+	 * @param authorizationHeader AccessToken
+	 * @return Return status code
 	 */
-	@PostMapping("/resend-email-validation-code")
-	public ResendEmailResponseDto resendEmailValidationCode(@RequestParam String email) {
-		return this.cognitoService.resendEmailValidationCode(email);
-	}
+	@PostMapping("/revoke-token")
+	public ResponseEntity<Void> revokeToken(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@RequestBody Map<String, String> body
+	) {
+		if (!authorizationHeader.startsWith("Bearer ")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
 
+		String refreshToken = body.get("refreshToken");
+		if (refreshToken == null || refreshToken.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		}
 
-	/**
-	 * Revoke Role to User
-	 * Path: /api/oauth/revoke-user-role
-	 * Method: PUT
-	 *
-	 * @param email User Email
-	 * @param role  Role to revoke
-	 * @return Return updated user
-	 */
-	@PutMapping("/revoke-user-role")
-	public User revokeUserRole(@RequestParam String email, @RequestBody RevokeGrantRolesRequestDto role) {
-		return this.cognitoService.revokeUserRole(email, role);
-	}
-
-
-	/**
-	 * Grant Role to User
-	 * Path: /api/oauth/grant-user-role
-	 * Method: PUT
-	 *
-	 * @param email User Email
-	 * @param role  Role to revoke
-	 * @return Return updated user
-	 */
-	@PutMapping("/grant-user-role")
-	public User grantUserRole(@RequestParam String email, @RequestBody RevokeGrantRolesRequestDto role) {
-		return this.cognitoService.grantUserRole(email, role);
+		oAuthService.revokeToken(refreshToken);
+		return ResponseEntity.noContent().build();
 	}
 }

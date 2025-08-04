@@ -5,7 +5,6 @@ import com.vingcard.athos.interview.persistence.entity.Lock;
 import com.vingcard.athos.interview.persistence.repository.GatewayRepository;
 import com.vingcard.athos.interview.persistence.repository.LockGatewayLinkRepository;
 import com.vingcard.athos.interview.persistence.repository.LockRepository;
-import com.vingcard.athos.interview.persistence.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +32,12 @@ class DummyDataLoaderTest {
 	@Autowired
 	private LockGatewayLinkRepository lockGatewayLinkRepository;
 
-	@Autowired
-	private RoleRepository roleRepository;
-
 	@BeforeEach
 	void setUp() {
 		// Clean up before each test
 		lockGatewayLinkRepository.deleteAll();
 		lockRepository.deleteAll();
 		gatewayRepository.deleteAll();
-		roleRepository.deleteAll();
 	}
 
 	@Test

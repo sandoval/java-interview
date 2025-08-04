@@ -27,13 +27,14 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(requests -> requests
 						// Permit all in /auth/**
 						.requestMatchers(
-								"/api/oauth/signup",
-								"/api/oauth/login",
-								"/api/oauth/validate-email",
-								"/api/oauth/resend-email-validation-code"
+								"/api/oauth/authorize",
+								"/api/oauth/callback"
 						).permitAll()
 
-						.requestMatchers("/api/oauth/me").authenticated()
+						.requestMatchers(
+								"/api/oauth/me",
+								"/api/oauth/revoke-token"
+						).authenticated()
 
 						// OAuth writer controls
 						.requestMatchers(
