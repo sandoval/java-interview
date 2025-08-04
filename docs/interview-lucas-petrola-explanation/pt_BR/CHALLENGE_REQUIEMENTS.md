@@ -2,7 +2,7 @@
 
 Estes são todos os tópicos para aprovação no desafio para Desenvovledores Backend Sêniores
 
-O aplicativo atualmente atende a vários pontos de extremidade da API. Você deve implementar uma estratégia de
+O aplicativo atende atualmente a vários pontos de extremidade da API. Você deve implementar uma estratégia de
 autenticação e autorização para este aplicativo.
 
 ---
@@ -28,11 +28,11 @@ Deve haver um ponto central de autenticação para todos os usuários e aplicati
 * [x] As contas de usuário devem ter o perfil de acesso de leitura atribuído automaticamente no momento da criação da
   conta.
 * [x] A solução de autenticação deve suportar centenas de milhares de usuários.
-* [ ] A interface de usuário de autenticação deve ser localizável e disponível pelo menos em inglês, português e
+* [x] A interface de usuário de autenticação deve ser localizável e disponível pelo menos em inglês, português e
   espanhol.
 * [x] A solução de autenticação deve suportar números de telefone para identificação do usuário no futuro.
 * [x] A solução de autenticação deve suportar integração SSO no futuro.
-* [ ] A autenticação deve ser feita em um navegador atualizado fornecido pelo sistema operacional.
+* [x] A autenticação deve ser feita em um navegador atualizado fornecido pelo sistema operacional.
 
 ## OAuth2 and JWTs
 
