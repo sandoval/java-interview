@@ -42,8 +42,8 @@ public class OAuthController {
 	/**
 	 * Autorize user to acess endpoints
 	 *
-	 * @param response
-	 * @throws IOException
+	 * @param response Response Servlet
+	 * @throws IOException Exception to control the login flow
 	 */
 	@GetMapping("/authorize")
 	public void authorize(HttpServletResponse response) throws IOException {
