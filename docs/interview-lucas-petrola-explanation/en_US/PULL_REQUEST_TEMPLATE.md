@@ -182,8 +182,7 @@ according to your access profile.
   Cognito settings;
 * [ ] Multifactor authentication (MFA) should also be implemented as a feature in AWS Cognito. It can be
 * [ ] Multifactor authentication (MFA) should also be implemented, which is available as a feature in AWS Cognito. It
-  can be
-  added without further difficulties;
+  can be added without further difficulties;
 * [ ] Enable ‘login’ via social networks. It can be configured via AWS Cognito, taking into account the
   specific configuration of each provider;
 * [ ] Internationalization tools have been configured in the backend. Implementation within the
