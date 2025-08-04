@@ -8,7 +8,7 @@ spring:
 
   datasource:
     username: ${POSTGRES_USER}
-    password: ${POSTGRES_password}
+    password: ${POSTGRES_PASSWORD}
     url: jdbc://postgresql:localhost:5432/assa_abloy_lock_simulator
     driver-class-name: org.postgresql.Driver
 
